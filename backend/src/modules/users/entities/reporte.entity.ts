@@ -1,15 +1,18 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Usuario } from './usuario.entity';
 
 @Entity('REPORTE')
 export class Reporte {
   @PrimaryGeneratedColumn()
   id_reporte: number;
 
-  @Column({ type: 'int' })
-  id_usuario_reportante: number;
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario_reportante' })
+  usuario_reportante: Usuario;
 
-  @Column({ type: 'int' })
-  id_usuario_reportado: number;
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario_reportado' })
+  usuario_reportado: Usuario;
 
   @Column({ type: 'varchar', length: 255 })
   motivo: string;
@@ -24,8 +27,9 @@ export class Reporte {
   @CreateDateColumn()
   fecha_reporte: Date;
 
-  @Column({ type: 'int', nullable: true })
-  id_admin_resolutor: number;
+  @ManyToOne(() => Usuario, { nullable: true })
+  @JoinColumn({ name: 'id_admin_resolutor' })
+  admin_resolutor: Usuario;
 
   @Column({ type: 'datetime', nullable: true })
   fecha_resolucion: Date;

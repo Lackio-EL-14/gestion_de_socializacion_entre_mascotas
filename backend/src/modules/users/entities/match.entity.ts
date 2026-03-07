@@ -1,15 +1,18 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Mascota } from './mascota.entity';
 
 @Entity('MATCH_MASCOTA') // Cambiado ligeramente por si 'MATCH' es palabra reservada en SQL que si lo es en mariadb pero al deployar no se sabe la verdad investigare
 export class Match {
   @PrimaryGeneratedColumn()
   id_match: number;
 
-  @Column({ type: 'int' })
-  id_mascota_1: number;
+  @ManyToOne(() => Mascota)
+  @JoinColumn({ name: 'id_mascota_1' })
+  mascota_1: Mascota;
 
-  @Column({ type: 'int' })
-  id_mascota_2: number;
+  @ManyToOne(() => Mascota)
+  @JoinColumn({ name: 'id_mascota_2' })
+  mascota_2: Mascota;
 
   @CreateDateColumn()
   fecha_match: Date;

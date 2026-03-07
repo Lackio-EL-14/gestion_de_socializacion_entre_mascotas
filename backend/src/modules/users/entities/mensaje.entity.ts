@@ -1,15 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Match } from './match.entity';
+import { Usuario } from './usuario.entity';
 
 @Entity('MENSAJE')
 export class Mensaje {
   @PrimaryGeneratedColumn()
   id_mensaje: number;
 
-  @Column({ type: 'int' })
-  id_match: number;
+  @ManyToOne(() => Match)
+  @JoinColumn({ name: 'id_match' })
+  match: Match;
 
-  @Column({ type: 'int' })
-  id_usuario_remitente: number;
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario_remitente' })
+  usuario_remitente: Usuario;
 
   @Column({ type: 'text' })
   contenido: string;

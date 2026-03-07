@@ -1,12 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Usuario } from './usuario.entity';
 
 @Entity('MASCOTA')
 export class Mascota {
   @PrimaryGeneratedColumn()
   id_mascota: number;
 
-  @Column({ type: 'int' })
-  id_usuario: number;
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: Usuario;
 
   @Column({ type: 'varchar', length: 100 })
   nombre: string;
@@ -27,7 +29,7 @@ export class Mascota {
   estado_salud: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
-  vacuna_imagen_url: string; // La simplificación que hicieron
+  vacuna_imagen_url: string; 
 
   @CreateDateColumn()
   fecha_registro: Date;

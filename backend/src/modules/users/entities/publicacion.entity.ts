@@ -1,12 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Usuario } from './usuario.entity';
 
 @Entity('PUBLICACION')
 export class Publicacion {
   @PrimaryGeneratedColumn()
   id_publicacion: number;
 
-  @Column({ type: 'int' })
-  id_usuario: number;
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: Usuario;
 
   @Column({ type: 'text', nullable: true })
   contenido_texto: string;

@@ -1,12 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Usuario } from './usuario.entity';
 
 @Entity('PERFIL_PROFESIONAL')
 export class PerfilProfesional {
   @PrimaryGeneratedColumn()
   id_perfil_prof: number;
 
-  @Column({ type: 'int', unique: true })
-  id_usuario: number;
+  @OneToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: Usuario;
 
   @Column({ type: 'varchar', length: 150 })
   nombre_servicio: string;

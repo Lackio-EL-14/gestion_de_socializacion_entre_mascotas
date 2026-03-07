@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Rol } from './rol.entity';
 
 @Entity('USUARIO') 
 export class Usuario {
@@ -30,7 +31,7 @@ export class Usuario {
   esta_activo: boolean;
 
    
-  // Cuando creemos la entidad ROL @ManyToOne
-  @Column({ type: 'int' })
-  id_rol: number;
+  @ManyToOne(() => Rol)
+  @JoinColumn({name: 'id_rol'})
+  rol: Rol;
 }

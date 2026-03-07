@@ -1,12 +1,14 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Usuario } from './usuario.entity';
 
 @Entity('NOTIFICACION')
 export class Notificacion {
   @PrimaryGeneratedColumn()
   id_notificacion: number;
 
-  @Column({ type: 'int' })
-  id_usuario_destino: number;
+  @ManyToOne(() => Usuario)
+  @JoinColumn({ name: 'id_usuario_destino' })
+  usuario_destino: Usuario;
 
   @Column({ type: 'varchar', length: 100 })
   tipo: string;

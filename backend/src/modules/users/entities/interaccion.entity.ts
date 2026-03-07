@@ -1,16 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Mascota } from './mascota.entity';
 
 @Entity('INTERACCION')
 export class Interaccion {
   @PrimaryGeneratedColumn()
   id_interaccion: number;
 
-  @Column({ type: 'int' })
-  id_mascota_origen: number;
+  @ManyToOne(() => Mascota)
+  @JoinColumn({ name: 'id_mascota_origen' })
+  mascota_origen: Mascota;
 
-  @Column({ type: 'int' })
-  id_mascota_destino: number;
-
+  @ManyToOne(() => Mascota)
+  @JoinColumn({ name: 'id_mascota_destino' })
+  mascota_destino: Mascota; 
+  
   @Column({ type: 'enum', enum: ['Me gusta', 'Duérmanlo'] })
   tipo_interaccion: string;
 
