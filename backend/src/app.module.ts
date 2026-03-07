@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -12,7 +13,11 @@ import { ProfessionalProfileModule } from './modules/professional-profile/profes
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [AuthModule, 
+  imports: [
+            ConfigModule.forRoot({
+              isGlobal: true,
+            }),
+            AuthModule, 
             UsersModule, 
             PetsModule, 
             MatchesModule, 
@@ -22,11 +27,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             ProfessionalProfileModule,
             TypeOrmModule.forRoot({//
               type: 'mariadb',
-              host: 'localhost',
+              host: process.env.DB_HOST,
               port: 3306,
-              username: 'root',
-              password: 'tu_password',
-              database: 'dogchat',
+              username: process.env.DB_USERNAME,
+              password: process.env.DB_PASSWORD,
+              database: process.env.DB_DATABASE,
               autoLoadEntities: true,
               synchronize: true,
             }),
