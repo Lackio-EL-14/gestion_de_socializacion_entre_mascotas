@@ -1,0 +1,57 @@
+main → develop → feature
+
+Cada nueva funcionalidad se crea desde develop.
+
+Ejemplo:
+
+git switch develop
+git pull
+git switch -c feature/register-form
+
+Cuando terminas:
+
+git switch develop
+git merge feature/register-form
+
+Luego puedes borrar la rama:
+
+git branch -d feature/register-form
+
+
+Cuando develop ya está listo para producción:
+
+git switch develop
+git switch -c release/1.0
+
+Aquí solo haces:
+
+fixes pequeños
+
+versión
+
+ajustes finales
+
+Luego se fusiona a:
+
+release → main
+release → develop
+
+Ejemplo:
+
+git switch main
+git merge release/1.0
+
+git switch develop
+git merge release/1.0
+
+Si hay un error en producción.
+
+Se crea desde main.
+
+git switch main
+git switch -c hotfix/login-error
+
+Cuando se arregla:
+
+hotfix → main
+hotfix → develop
