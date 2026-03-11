@@ -52,7 +52,7 @@ export class UsuariosService {
   }
 
   async login(loginUsuarioDto: LoginUsuarioDto) {
-    const { email, contrasena_hash } = loginUsuarioDto;
+    const { email, contrasena } = loginUsuarioDto;
 
     const usuario = await this.usuarioRepository.findOne({ where: { email } });
 
@@ -66,7 +66,7 @@ export class UsuariosService {
       throw new UnauthorizedException('Cuenta bloqueada. Contacte al administrador.');
     }
 
-    const contrasenaValida = await bcrypt.compare(contrasena_hash, usuario.contrasena_hash);
+    const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena_hash);
 
     // CA2 y CA3 (Parte 2): Si la contraseña es incorrecta 5 veces bloquemos la cuenta 
     if (!contrasenaValida) {
