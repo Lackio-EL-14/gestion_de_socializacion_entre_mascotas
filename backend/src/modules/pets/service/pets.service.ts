@@ -6,6 +6,7 @@ import { Pet } from '../entities/pet.entity';
 import { CreatePetDto } from '../dto/create-pet.dto';
 
 import { UpdatePetDto } from '../dto/update-pet.dto';
+import { BadRequestException } from '@nestjs/common';
 
 @Injectable()
 export class PetsService {
@@ -15,7 +16,18 @@ export class PetsService {
     private petsRepository: Repository<Pet>,
   ) {}
 
-  async create(createPetDto: CreatePetDto): Promise<Pet> {
+  async create(createPetDto: CreatePetDto) {
+
+    const count = await this.petsRepository
+      .createQueryBuilder('pet')
+      .where('pet.id_usuario = :id', { id: createPetDto.id_usuario })
+      .getCount();
+
+    if (count >= 19) {
+      throw new BadRequestException(
+        'Has alcanzado el límite máximo de 20 mascotas'
+      );
+    }
 
     const pet = this.petsRepository.create(createPetDto);
 
