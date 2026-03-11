@@ -1,7 +1,5 @@
-import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
 
 interface RegistroUsuarioRequest {
   nombre: string;
@@ -12,8 +10,7 @@ interface RegistroUsuarioRequest {
 
 @Component({
   selector: 'app-register',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  standalone: false,
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
@@ -25,7 +22,7 @@ export class Register {
   confirmarContrasena = '';
   enviando = false;
 
-  private readonly http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
   registro(): void {
     if (
