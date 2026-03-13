@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 
 interface LoginUsuarioRequest {
   email: string;
@@ -16,18 +16,43 @@ export class Login {
   email = '';
   contrasena = '';
   enviando = false;
-
-  constructor(private http: HttpClient) {}
+  modalVisible = false;
+  modalTitulo = '';
+  modalMensaje = '';
+  modalTipo: 'success' | 'error' = 'success';
+constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   iniciarSesion(): void {
-    if (!this.email || !this.contrasena) {
-      alert('Todos los campos son obligatorios');
+    const email = this.email.trim();
+    const contrasena = this.contrasena;
+
+    if (!email) {
+      this.mostrarModal('Error de validación', 'El correo electrónico es obligatorio', 'error');
+      return;
+    }
+
+    const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailValido.test(email)) {
+      this.mostrarModal('Error de validación', 'El formato del correo no es válido', 'error');
+      return;
+    }
+
+    if (!contrasena) {
+      this.mostrarModal('Error de validación', 'La contraseña es obligatoria', 'error');
+      return;
+    }
+
+    if (contrasena.length < 6) {
+      this.mostrarModal('Error de validación', 'La contraseña debe tener al menos 6 caracteres', 'error');
       return;
     }
 
     const body: LoginUsuarioRequest = {
-      email: this.email.trim(),
-      contrasena: this.contrasena,
+      email,
+      contrasena,
     };
 
     this.enviando = true;
@@ -35,19 +60,34 @@ export class Login {
     this.http.post('http://localhost:3000/usuarios/login', body).subscribe({
       next: (respuesta) => {
         console.log('Login exitoso:', respuesta);
-        alert('Inicio de sesión correcto');
         this.enviando = false;
+        this.mostrarModal('Inicio de sesión correcto', 'Has iniciado sesión correctamente', 'success');
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error al iniciar sesión:', error);
         const mensaje = error?.error?.message;
-        alert(
+
+        this.enviando = false;
+        this.mostrarModal(
+          'Error de inicio de sesión',
           Array.isArray(mensaje)
             ? mensaje.join('\n')
-            : mensaje || 'Credenciales inválidas o error al iniciar sesión'
+            : mensaje || 'Credenciales inválidas o error al iniciar sesión',
+          'error'
         );
-        this.enviando = false;
+        this.cdr.detectChanges();
       },
     });
   }
+  mostrarModal(titulo: string, mensaje: string, tipo: 'success' | 'error'): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalTipo = tipo;
+    this.modalVisible = true;
+  }
+
+cerrarModal(): void {
+  this.modalVisible = false;
+}
 }
