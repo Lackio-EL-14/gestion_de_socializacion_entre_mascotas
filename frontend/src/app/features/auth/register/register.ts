@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface RegistroUsuarioRequest {
   nombre: string;
@@ -21,8 +22,12 @@ export class Register {
   contrasena = '';
   confirmarContrasena = '';
   enviando = false;
+  modalVisible = false;
+  modalTitulo = '';
+  modalMensaje = '';
+  modalTipo: 'success' | 'error' = 'success';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   registro(): void {
     if (
@@ -32,12 +37,12 @@ export class Register {
       !this.contrasena ||
       !this.confirmarContrasena
     ) {
-      alert('Todos los campos son obligatorios');
+      this.mostrarModal('Campos incompletos', 'Todos los campos son obligatorios', 'error');
       return;
     }
 
     if (this.contrasena !== this.confirmarContrasena) {
-      alert('Las contrasenas no coinciden');
+      this.mostrarModal('Error de validación', 'Las contraseñas no coinciden', 'error');
       return;
     }
 
@@ -52,14 +57,18 @@ export class Register {
 
     this.http.post('http://localhost:3000/usuarios/registro', body).subscribe({
       next: () => {
-        alert('Cuenta creada correctamente');
         this.limpiarFormulario();
         this.enviando = false;
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         console.error('Error al registrar:', error);
         const mensaje = error?.error?.message;
-        alert(Array.isArray(mensaje) ? mensaje.join('\n') : mensaje || 'Hubo un error al registrar');
+        this.mostrarModal(
+          'Error de registro',
+          Array.isArray(mensaje) ? mensaje.join('\n') : mensaje || 'Hubo un error al registrar',
+          'error'
+        );
         this.enviando = false;
       },
     });
@@ -72,4 +81,18 @@ export class Register {
     this.contrasena = '';
     this.confirmarContrasena = '';
   }
+  mostrarModal(titulo: string, mensaje: string, tipo: 'success' | 'error'): void {
+  this.modalTitulo = titulo;
+  this.modalMensaje = mensaje;
+  this.modalTipo = tipo;
+  this.modalVisible = true;
+}
+
+cerrarModal(): void {
+  this.modalVisible = false;
+
+  if (this.modalTipo === 'success') {
+    this.router.navigate(['/login']);
+  }
+}
 }
