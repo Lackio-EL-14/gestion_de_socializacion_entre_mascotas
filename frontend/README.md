@@ -271,4 +271,64 @@ frontend/src/app
 
 Es una implementacion inicial funcional de HU-01: permite registrar un dueño desde la interfaz y enviar los datos al backend, todas las pruebas pasaron de manera eficiente.
 
+## HU-02
+Se implementó la segunda historia de usuario, para iniciar sesión en el sistema:
 
+### Estructura usada para el inicio de sesión (Auth)
+
+frontend/src/app
+|
+|- features/auth .................................... Módulo funcional de autenticación
+|  |- auth-module.ts ................................. Agrupa componentes y dependencias de Auth
+|  |- auth-routing-module.ts ......................... Archivo de rutas del módulo Auth
+|  |- login/
+|  |  |- login.ts .................................... Lógica de autenticación y envío al backend
+|  |  |- login.html .................................. Vista del formulario de inicio de sesión
+|  |  |- login.scss .................................. Estilos de la pantalla de login
+|  |- register/
+|     |- register.ts ................................. Componente de registro ya implementado en HU-01
+|     |- register.html ............................... Vista de registro
+|
+|- app-routing-module.ts ............................ Define las rutas principales del sistema
+|- app-module.ts .................................... Módulo raíz que importa HttpClient
+|- core/services/auth.ts ............................ Servicio Auth preparado para futura gestión de sesión
+
+### Que se hizo en el inicio de sesión
+
+1. Se implementó el componente **Login** dentro del módulo **Auth**.
+
+2. Se construyó un formulario de autenticación con los campos:
+   - email
+   - contraseña
+
+3. Se agregaron validaciones básicas en frontend:
+   - Email obligatorio.
+   - Validación de formato de email.
+   - Contraseña obligatoria.
+   - Contraseña mínima de 6 caracteres.
+
+4. Se integró el envío al backend mediante una petición HTTP POST al endpoint:
+
+   - http://localhost:3000/usuarios/login
+
+5. Se implementó manejo de respuestas del servidor:
+   - Si las credenciales son correctas → se muestra modal de inicio de sesión exitoso.
+   - Si ocurre un error → se muestra un modal con el mensaje retornado por el backend o un mensaje genérico.
+
+6. Se reemplazaron los `alert()` por un **sistema de modal reutilizable** para mostrar:
+   - errores de validación
+   - errores del backend
+   - mensajes de éxito
+
+7. Se utilizó **ChangeDetectorRef** para asegurar la actualización inmediata de la vista cuando el backend retorna errores.
+
+### Resultado
+
+La implementación de HU-02 permite que un usuario registrado:
+
+- ingrese sus credenciales desde la interfaz
+- valide errores básicos en frontend
+- autentique contra el backend
+- reciba retroalimentación visual mediante modales.
+
+La funcionalidad cumple con los criterios de aceptación definidos para la autenticación inicial del sistema.
