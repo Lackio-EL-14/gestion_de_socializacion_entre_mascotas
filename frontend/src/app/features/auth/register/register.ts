@@ -135,7 +135,7 @@ cerrarModal(): void {
   this.modalVisible = false;
 
   if (this.modalTipo === 'success') {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 }
 }

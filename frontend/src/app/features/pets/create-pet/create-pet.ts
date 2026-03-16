@@ -1,23 +1,23 @@
 import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { PetsService } from "../../../../../../backend/src/modules/pets/service/pets.service";
 import { HttpClient } from "@angular/common/http";
 
 interface CreatePetRequest {
-  name: string;
-  breed: string;
-  size: string;
-  gender: string;
-  age: number;
-  vaccineFile: File | null;
-  image: File | null;
+  nombre: string;
+  raza: string;
+  tamano: string;
+  genero: string;
+  edad: number;
+  estado_salud: string;
+  vacuna_imagen_url: string;
+  id_usuario: string | null;
 }
 @Component({
   selector: "app-create-pet",
   standalone: false,
   templateUrl: "./create-pet.html",
-  styleUrl: "./create-pet.scss"
+  styleUrls: ["./create-pet.scss"]
 })
 export class CreatePetComponent {
   nombre = "";
@@ -27,6 +27,7 @@ export class CreatePetComponent {
   edad: number | null = null;
   archivoVacunas: File | null = null;
   imagen: File | null = null;
+  estado_salud = "saludable";
   enviando = false;
   modalVisible = false;
   modalTitulo = '';
@@ -36,11 +37,11 @@ export class CreatePetComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private petService: PetsService,
     private cdr: ChangeDetectorRef
   ) {}
 
   submit() {
+    console.log("Submit mascota ejecutado")
     const nombre = this.nombre.trim();
     const raza = this.raza.trim();
     const tamano = this.tamano.trim();
@@ -48,6 +49,7 @@ export class CreatePetComponent {
     const edad = this.edad;
     const archivoVacunas = this.archivoVacunas;
     const imagen = this.imagen;
+    const estado_salud = this.estado_salud;
     if(!nombre) {
       this.mostrarModal('Error de validación', 'El nombre es obligatorio', 'error');
       return;
@@ -70,18 +72,20 @@ export class CreatePetComponent {
     }
 
     const body: CreatePetRequest = {
-      name: nombre,
-      breed: raza,
-      size: tamano,
-      gender: genero,
-      age: edad,
-      vaccineFile: archivoVacunas,
-      image: imagen
+      nombre: nombre,
+      raza: raza,
+      tamano: tamano,
+      genero: genero,
+      edad: edad,
+      estado_salud: "saludable",
+      vacuna_imagen_url: "",
+      //imagen: imagen
+      id_usuario: localStorage.getItem("userId") || "1"
     };
 
     this.enviando = true;
 
-    this.http.post('/api/pets', body).subscribe({
+    this.http.post('http://localhost:3000/pets', body).subscribe({
       next: () => {
         this.limpiarFormulario();
         this.enviando = false;
@@ -96,7 +100,23 @@ export class CreatePetComponent {
         this.cdr.detectChanges();
       },
     });
+
   }
+  onImageSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+
+  if (input.files && input.files.length > 0) {
+    this.imagen = input.files[0];
+  }
+}
+
+onVaccineSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+
+  if (input.files && input.files.length > 0) {
+    this.archivoVacunas = input.files[0];
+  }
+}
   private limpiarFormulario() {
     this.nombre = '';
     this.raza = '';
@@ -115,7 +135,7 @@ export class CreatePetComponent {
   cerrarModal(): void {
     this.modalVisible = false;
     if(this.modalTipo === 'success') {
-      this.router.navigate(['/pets']);
+      this.router.navigate(['']);
     }
   }
 }

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface LoginUsuarioRequest {
   email: string;
@@ -22,7 +23,8 @@ export class Login {
   modalTipo: 'success' | 'error' = 'success';
 constructor(
     private http: HttpClient,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   iniciarSesion(): void {
@@ -89,5 +91,8 @@ constructor(
 
 cerrarModal(): void {
   this.modalVisible = false;
+  if(this.modalTipo === 'success') {
+    this.router.navigate(['/pets/create-pet']);
+  }
 }
 }

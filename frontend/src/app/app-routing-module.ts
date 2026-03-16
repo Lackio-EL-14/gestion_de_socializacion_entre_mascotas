@@ -4,11 +4,16 @@ import { Home } from './features/home/home';
 
 const routes: Routes = [
   { path: '', component: Home },
-  
+
   {
-    path: '',
+    path: 'auth',
     loadChildren: () =>
       import('./features/auth/auth-module').then(m => m.AuthModule)
+  },
+  {
+    path: 'pets',
+    loadChildren: () =>
+      import('./features/pets/pets-module').then(m => m.PetsModule)
   }
 ];
 
