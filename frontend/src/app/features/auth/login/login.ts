@@ -62,6 +62,10 @@ constructor(
     this.http.post('http://localhost:3000/usuarios/login', body).subscribe({
       next: (respuesta) => {
         console.log('Login exitoso:', respuesta);
+        if('id_usuario' in respuesta && typeof respuesta.id_usuario === 'number') {
+          const idUsuario = respuesta.id_usuario;
+          localStorage.setItem('id_usuario', ""+idUsuario);
+        }
         this.enviando = false;
         this.mostrarModal('Inicio de sesión correcto', 'Has iniciado sesión correctamente', 'success');
         this.cdr.detectChanges();

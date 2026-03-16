@@ -80,7 +80,7 @@ export class CreatePetComponent {
       estado_salud: "saludable",
       vacuna_imagen_url: "",
       //imagen: imagen
-      id_usuario: localStorage.getItem("userId") || "1"
+      id_usuario: localStorage.getItem("id_usuario")
     };
 
     this.enviando = true;
