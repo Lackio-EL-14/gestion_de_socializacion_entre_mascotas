@@ -95,8 +95,5 @@ constructor(
 
 cerrarModal(): void {
   this.modalVisible = false;
-  if(this.modalTipo === 'success') {
-    this.router.navigate(['/pets/create-pet']);
-  }
 }
 }

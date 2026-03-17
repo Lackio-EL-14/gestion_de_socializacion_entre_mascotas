@@ -11,10 +11,10 @@ export class Home {
   constructor(private router: Router) {}
 
   irARegistroDueno(): void {
-    this.router.navigate(['/auth/register']);
+    this.router.navigate(['/register']);
   }
 
   irARegistroTrabajador(): void {
-    this.router.navigate(['/auth/register-trabajador']);
+    this.router.navigate(['/register-trabajador']);
   }
 }

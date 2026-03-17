@@ -4,9 +4,8 @@ import { Home } from './features/home/home';
 
 const routes: Routes = [
   { path: '', component: Home },
-
   {
-    path: 'auth',
+    path: '',
     loadChildren: () =>
       import('./features/auth/auth-module').then(m => m.AuthModule)
   },
