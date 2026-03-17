@@ -91,6 +91,7 @@ export class UsuariosService {
       access_token: this.jwtService.sign(payload),
       id_usuario: usuario.id_usuario,
       //discutir si para el home tambien pondremos un bienvendio + nombre de usuario.
+      nombre: usuario.nombre
     };
   }
 

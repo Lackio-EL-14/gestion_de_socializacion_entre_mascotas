@@ -7,6 +7,11 @@ interface LoginUsuarioRequest {
   contrasena: string;
 }
 
+interface LoginUsuarioResponse {
+  access_token: string;
+  nombre: string;
+}
+
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -59,7 +64,7 @@ constructor(
 
     this.enviando = true;
 
-    this.http.post('http://localhost:3000/usuarios/login', body).subscribe({
+    this.http.post<LoginUsuarioResponse>('http://localhost:3000/usuarios/login', body).subscribe({
       next: (respuesta) => {
         console.log('Login exitoso:', respuesta);
         if('id_usuario' in respuesta && typeof respuesta.id_usuario === 'number') {
@@ -67,8 +72,8 @@ constructor(
           localStorage.setItem('id_usuario', ""+idUsuario);
         }
         this.enviando = false;
-        this.mostrarModal('Inicio de sesión correcto', 'Has iniciado sesión correctamente', 'success');
-        this.cdr.detectChanges();
+        sessionStorage.setItem('usuarioNombre', respuesta.nombre);
+        this.router.navigate(['/dashboard-owner']);
       },
       error: (error) => {
         console.error('Error al iniciar sesión:', error);
