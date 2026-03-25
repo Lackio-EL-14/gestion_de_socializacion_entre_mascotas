@@ -12,6 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UsuariosService {
   private readonly logger = new Logger(UsuariosService.name);
+
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
@@ -23,6 +24,7 @@ export class UsuariosService {
 
     const usuarioExistente = await this.usuarioRepository.findOne({ where: { email } });
     if (usuarioExistente) {
+      this.logger.warn(`[AUDIT-REGISTRO] Posible recolección de información. Intento de registro con correo ya existente: ${email}`);
       throw new ConflictException('El correo electrónico ya está en uso');
     }
 
@@ -39,13 +41,13 @@ export class UsuariosService {
       });
 
       const usuarioGuardado = await this.usuarioRepository.save(nuevoUsuario);
-
       const { contrasena_hash: _, ...usuarioSinContrasena } = usuarioGuardado;
       
+      this.logger.log(`[AUDIT-REGISTRO] Creación de identidad exitosa. ID de usuario asignado: ${usuarioGuardado.id_usuario}`);
       return usuarioSinContrasena;
 
     } catch (error) {
-      console.error(' ERROR REAL DE LA BASE DE DATOS:', error);
+      this.logger.error(`[ERROR-PERSISTENCIA] Fallo crítico al insertar nuevo usuario: ${error.message}`, error.stack);
       throw new InternalServerErrorException('Ocurrió un error al guardar el usuario');
     }
   }
@@ -56,10 +58,12 @@ export class UsuariosService {
     const usuario = await this.usuarioRepository.findOne({ where: { email } });
 
     if (!usuario) {
+      this.logger.warn(`[AUDIT-AUTH] Intento de acceso fallido. Objetivo no encontrado en registros: ${email}`);
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
     if (!usuario.esta_activo) {
+      this.logger.warn(`[AUDIT-AUTH] Acceso denegado. Intento de inicio de sesión en cuenta inactiva o bloqueada. ID: ${usuario.id_usuario}`);
       throw new UnauthorizedException('Cuenta bloqueada. Contacte al administrador.');
     }
 
@@ -68,8 +72,11 @@ export class UsuariosService {
     if (!contrasenaValida) {
       usuario.cantidad_strikes += 1;
       
-      if (usuario.cantidad_strikes >= 5) {  //numero de chances
+      if (usuario.cantidad_strikes >= 5) {
         usuario.esta_activo = false;
+        this.logger.warn(`[AUDIT-SEC] Mitigación activada. Cuenta bloqueada temporalmente por posible intrusión de fuerza bruta. ID: ${usuario.id_usuario}`);
+      } else {
+        this.logger.warn(`[AUDIT-AUTH] Validación de credenciales fallida (Strike ${usuario.cantidad_strikes}/5). Objetivo ID: ${usuario.id_usuario}`);
       }
       
       await this.usuarioRepository.save(usuario); 
@@ -82,6 +89,9 @@ export class UsuariosService {
     }
 
     const payload = { email: usuario.email, sub: usuario.id_usuario };
+    
+    this.logger.log(`[AUDIT-AUTH] Autenticación completada satisfactoriamente. Sesión iniciada para ID: ${usuario.id_usuario}`);
+    
     return {
       access_token: this.jwtService.sign(payload),
       id_usuario: usuario.id_usuario,
@@ -94,6 +104,7 @@ export class UsuariosService {
     const usuario = await this.usuarioRepository.findOne({ where: { email } });
 
     if (!usuario) {
+      this.logger.warn(`[AUDIT-RECOVERY] Intento de recuperación de credenciales para correo inexistente: ${email}`);
       return { message: 'Si el correo existe, se ha enviado un enlace de recuperación.' };
     }
 
@@ -104,12 +115,12 @@ export class UsuariosService {
     });
 
     const linkSimulado = `http://localhost:3000/restablecer?token=${tokenRecuperacion}`;
-    console.log('=============================================');
-    console.log(`📧 ENVIANDO CORREO A: ${email}`);
-    console.log(`🔗 LINK DE RECUPERACIÓN: ${linkSimulado}`);
-    console.log('=============================================');
+    
+    this.logger.log(`[AUDIT-RECOVERY] Token de recuperación temporal generado exitosamente para ID: ${usuario.id_usuario}`);
+    this.logger.debug(`SIMULACIÓN DE CORREO SMTP -> DESTINO: ${email} | ENLACE: ${linkSimulado}`);
 
-    return { message: 'Si el correo existe, se ha enviado un enlace de recuperación.',
+    return { 
+      message: 'Si el correo existe, se ha enviado un enlace de recuperación.',
       dev_token: tokenRecuperacion
     };
   }
@@ -122,6 +133,7 @@ export class UsuariosService {
       
       const usuario = await this.usuarioRepository.findOne({ where: { id_usuario: payload.sub } });
       if (!usuario) {
+        this.logger.error(`[AUDIT-SEC] Anomalía detectada. Token criptográfico válido pero identidad inexistente. ID asociado: ${payload.sub}`);
         throw new BadRequestException('Usuario no encontrado');
       }
 
@@ -130,8 +142,11 @@ export class UsuariosService {
 
       await this.usuarioRepository.save(usuario);
 
+      this.logger.log(`[AUDIT-RECOVERY] Restablecimiento de credenciales aplicado correctamente para ID: ${usuario.id_usuario}`);
+
       return { message: 'Contraseña actualizada correctamente. Ya puedes iniciar sesión.' };
     } catch (error) {
+      this.logger.warn(`[AUDIT-SEC] Rechazo de token de recuperación. Firma inválida, manipulada o expirada.`);
       throw new BadRequestException('El token es inválido o ha expirado');
     }
   }
