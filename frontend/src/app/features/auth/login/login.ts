@@ -10,6 +10,7 @@ interface LoginUsuarioRequest {
 interface LoginUsuarioResponse {
   access_token: string;
   nombre: string;
+  email: string;
   id_usuario: number;
 }
 
@@ -68,12 +69,13 @@ constructor(
     this.http.post<LoginUsuarioResponse>('http://localhost:3000/usuarios/login', body).subscribe({
       next: (respuesta) => {
         console.log('Login exitoso:', respuesta);
-
+ 
+        sessionStorage.setItem('usuarioEmail', respuesta.email || email);
         localStorage.setItem('id_usuario', String(respuesta.id_usuario));
         localStorage.setItem('access_token', respuesta.access_token);
         sessionStorage.setItem('usuarioNombre', respuesta.nombre);
 
-        this.enviando = false;
+        this.enviando = false;       
         this.router.navigate(['/dashboard-owner']);
       },
       error: (error) => {
