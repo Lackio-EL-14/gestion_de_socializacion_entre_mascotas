@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, InternalServerErrorException, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException, UnauthorizedException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Usuario } from '../entities/usuario.entity';
@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsuariosService {
+  private readonly logger = new Logger(UsuariosService.name);
   constructor(
     @InjectRepository(Usuario)
     private usuarioRepository: Repository<Usuario>,
@@ -67,7 +68,7 @@ export class UsuariosService {
     if (!contrasenaValida) {
       usuario.cantidad_strikes += 1;
       
-      if (usuario.cantidad_strikes >= 5) {  //5 chances para iniciar sesion
+      if (usuario.cantidad_strikes >= 5) {  //numero de chances
         usuario.esta_activo = false;
       }
       
