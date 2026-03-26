@@ -51,7 +51,7 @@ export class ListPetsComponent implements OnInit {
   this.error = '';
 
   this.http.get<Mascota[] | Mascota>(
-    `http://localhost:3000/pets/user/${idUsuario}?t=${Date.now()}`
+    `https://gestion-de-socializacion-entre-mascotas.onrender.com/pets/user/${idUsuario}?t=${Date.now()}`
   ).subscribe({
     next: (respuesta) => {
       console.log('Mascotas recibidas:', respuesta);
