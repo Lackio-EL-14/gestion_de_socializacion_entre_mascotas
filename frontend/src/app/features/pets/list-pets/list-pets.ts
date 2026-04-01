@@ -53,7 +53,7 @@ obtenerMascotas(): void {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     this.http.get<Mascota[] | Mascota>(
-      `http://localhost:3000/pets/my-pets/`,
+      `http://localhost:3000/pets/my-pets`,
       { headers }
     ).subscribe({
       next: (respuesta) => {
