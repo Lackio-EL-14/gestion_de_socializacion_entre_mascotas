@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -72,49 +72,52 @@ export class EditPetComponent implements OnInit {
     this.cargarMascota();
   }
 
-  cargarMascota(): void {
-    const idUsuario = localStorage.getItem('id_usuario');
+cargarMascota(): void {
+  const token = localStorage.getItem('access_token');
 
-    if (!idUsuario) {
-      this.mostrarModal('Error', 'No se encontró un usuario logeado', 'error');
-      return;
-    }
-
-    this.cargando = true;
-
-    this.http.get<Mascota[] | Mascota>(
-      `http://localhost:3000/pets/user/${idUsuario}?t=${Date.now()}`
-    ).subscribe({
-      next: (respuesta) => {
-        const mascotas = Array.isArray(respuesta) ? respuesta : [respuesta];
-        const mascota = mascotas.find(m => m.id_mascota === this.idMascota);
-
-        if (!mascota) {
-          this.cargando = false;
-          this.mostrarModal('Error', 'Mascota no encontrada', 'error');
-          this.cdr.detectChanges();
-          return;
-        }
-
-        this.nombre = mascota.nombre || '';
-        this.raza = mascota.raza || '';
-        this.tamano = mascota.tamano || '';
-        this.genero = mascota.genero || '';
-        this.edad = mascota.edad;
-        this.estado_salud = mascota.estado_salud || 'saludable';
-        this.vacuna_imagen_url = mascota.vacuna_imagen_url;
-
-        this.cargando = false;
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error al cargar la mascota:', error);
-        this.cargando = false;
-        this.mostrarModal('Error', 'No se pudo cargar la mascota', 'error');
-        this.cdr.detectChanges();
-      }
-    });
+  if (!token) {
+    this.mostrarModal('Error', 'No se encontró el token de seguridad', 'error');
+    return;
   }
+
+  this.cargando = true;
+
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+  this.http.get<Mascota[] | Mascota>(
+    'http://localhost:3000/pets/my-pets',
+    { headers }
+  ).subscribe({
+    next: (respuesta) => {
+      const mascotas = Array.isArray(respuesta) ? respuesta : [respuesta];
+      const mascota = mascotas.find(m => m.id_mascota === this.idMascota);
+
+      if (!mascota) {
+        this.cargando = false;
+        this.mostrarModal('Error', 'Mascota no encontrada', 'error');
+        this.cdr.detectChanges();
+        return;
+      }
+
+      this.nombre = mascota.nombre || '';
+      this.raza = mascota.raza || '';
+      this.tamano = mascota.tamano || '';
+      this.genero = mascota.genero || '';
+      this.edad = mascota.edad;
+      this.estado_salud = mascota.estado_salud || 'saludable';
+      this.vacuna_imagen_url = mascota.vacuna_imagen_url;
+
+      this.cargando = false;
+      this.cdr.detectChanges();
+    },
+    error: (error) => {
+      console.error('Error al cargar la mascota:', error);
+      this.cargando = false;
+      this.mostrarModal('Error', 'No se pudo cargar la mascota', 'error');
+      this.cdr.detectChanges();
+    }
+  });
+}
 
   submit(): void {
     if (!this.idMascota) {
