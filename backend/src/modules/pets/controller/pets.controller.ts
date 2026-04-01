@@ -12,7 +12,7 @@ export class PetsController {
   create(@Body() createPetDto: CreatePetDto) {
     return this.petsService.create(createPetDto);
   }
-
+  /* Luis Esto no sirve borralo este era el problema
   @Get('user/:id')
   findByUser(@Param('id', ParseIntPipe) id: number) {
     return this.petsService.findByUser(id);
@@ -22,6 +22,7 @@ export class PetsController {
   findAll() {
     return this.petsService.findAll();
   }
+  */
 
   @UseGuards(JwtAuthGuard) 
   @Get('my-pets')
