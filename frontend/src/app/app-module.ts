@@ -13,6 +13,7 @@ import { App } from './app';
 import { LanguageService } from './core/services/language.service';
 import { Home } from './features/home/home';
 import { DashboardOwner } from './features/dashboards/dashboard-owner/dashboard-owner';
+import { DashboardAdmin } from './features/dashboards/dashboard-admin/dashboard-admin';
 import { DashboardEditOwner } from './features/dashboards/dashboard-edit_owner/dashboard-edit-owner';
 import { SharedModule } from './shared/shared-module';
 
@@ -35,7 +36,7 @@ export function initializeLanguage(languageService: LanguageService): () => void
 }
 
 @NgModule({
-  declarations: [App, Home, DashboardOwner, DashboardEditOwner],
+  declarations: [App, Home, DashboardOwner, DashboardEditOwner, DashboardAdmin],
   imports: [
     BrowserModule,
     AppRoutingModule,
