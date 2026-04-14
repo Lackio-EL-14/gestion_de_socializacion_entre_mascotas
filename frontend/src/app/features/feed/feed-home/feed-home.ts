@@ -1,6 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { finalize, TimeoutError, timeout } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 interface RandomPetResponse {
   id_mascota: number;
@@ -24,7 +26,7 @@ interface RandomPetResponse {
   styleUrl: './feed-home.scss',
 })
 export class FeedHome implements OnInit {
-  private readonly apiBaseUrl = 'https://gestion-de-socializacion-entre-mascotas.onrender.com';
+  private readonly apiBaseUrl = 'http://localhost:3000';
   private huesitoReactionTimer: ReturnType<typeof setTimeout> | null = null;
 
   currentUserId: number | null = null;
@@ -38,20 +40,25 @@ export class FeedHome implements OnInit {
   constructor(
     private readonly http: HttpClient,
     private readonly cdr: ChangeDetectorRef,
+    private readonly translate: TranslateService,
+    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
     this.currentUserId = this.getCurrentUserId();
 
     if (!this.currentUserId) {
-      this.errorMessage =
-        'No se encontro tu id de usuario en la sesion. Inicia sesion nuevamente.';
+      this.errorMessage = this.t('feed.errors.userIdNotFound');
       this.cdr.detectChanges();
       return;
     }
 
     this.loadRandomPet();
     this.cdr.detectChanges();
+  }
+
+  private t(key: string): string {
+    return this.translate.instant(key);
   }
 
   loadNextPet(): void {
@@ -148,8 +155,7 @@ export class FeedHome implements OnInit {
           this.pet = pet;
 
           if (!pet) {
-            this.errorMessage =
-              'No hay perritos disponibles para mostrar en este momento.';
+            this.errorMessage = this.t('feed.errors.noPetsAvailable');
           }
 
           this.cdr.detectChanges();
@@ -158,20 +164,28 @@ export class FeedHome implements OnInit {
           this.pet = null;
 
           if (error instanceof TimeoutError) {
-            this.errorMessage =
-              'La solicitud tardo demasiado. Verifica que el backend este encendido e intenta nuevamente.';
+            this.errorMessage = this.t('feed.errors.requestTimeout');
             return;
           }
 
           this.errorMessage =
             error.status === 404
-              ? 'No hay perritos disponibles para mostrar en este momento.'
+              ? this.t('feed.errors.noPetsAvailable')
               : error.status === 0
-                ? 'No se pudo conectar con el backend en https://gestion-de-socializacion-entre-mascotas.onrender.com'
-                : 'No se pudo cargar el perrito aleatorio. Intenta de nuevo.';
+                ? this.t('feed.errors.connectionFailed')
+                : this.t('feed.errors.loadFailed');
 
           this.cdr.detectChanges();
         },
       });
   }
+  goToReport(): void {
+    if (!this.pet?.id_usuario) {
+      return;
+    }
+
+    this.router.navigate(['/reports/create-report'], {
+      state: { id_usuario_reported: this.pet.id_usuario }
+    });
+}
 }
