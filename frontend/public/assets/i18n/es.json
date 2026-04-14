@@ -324,5 +324,27 @@
         "loadFailed": "No se pudo cargar el perfil del usuario"
       }
     }
+    , "list": {
+      "title": "Usuarios",
+      "subtitle": "Explora otros dueños de mascotas en la plataforma",
+      "searchPlaceholder": "Buscar por nombre...",
+      "loading": "Cargando usuarios...",
+      "empty": "No se encontraron usuarios.",
+      "viewProfile": "Ver Perfil",
+      "table": {
+        "photo": "Foto",
+        "name": "Nombre",
+        "email": "Email",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "errors": {
+        "loadFailed": "No se pudieron cargar los usuarios."
+      }
+    }
   }
 }

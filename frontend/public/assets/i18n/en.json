@@ -324,5 +324,27 @@
         "loadFailed": "Could not load the user profile"
       }
     }
+    , "list": {
+      "title": "Users",
+      "subtitle": "Explore other pet owners on the platform",
+      "searchPlaceholder": "Search by name...",
+      "loading": "Loading users...",
+      "empty": "No users found.",
+      "viewProfile": "View Profile",
+      "table": {
+        "photo": "Photo",
+        "name": "Name",
+        "email": "Email",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "errors": {
+        "loadFailed": "Could not load users."
+      }
+    }
   }
 }
