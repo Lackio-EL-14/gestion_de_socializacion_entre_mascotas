@@ -1,0 +1,76 @@
+.page-header {
+  margin-bottom: 32px;
+  &__title { font-size: 1.75rem; font-weight: 700; }
+  &__subtitle { font-size: 0.9rem; color: #64748b; margin-top: 4px; }
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+// Sidebar del Perfil (Avatar)
+.profile-sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 36px; }
+.avatar-card {
+  background: #fff; border-radius: 16px; padding: 32px 24px 28px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  border: 1px solid #e2e8f0; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+
+  &__photo-wrap { position: relative; width: 100px; height: 100px; margin-bottom: 8px; }
+  &__photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #e2e8f0; }
+  &__change-btn {
+    position: absolute; bottom: 2px; right: 2px; width: 30px; height: 30px;
+    background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    border: 2px solid #fff; cursor: pointer;
+    svg { width: 13px; height: 13px; stroke: #fff; }
+  }
+  &__file-input { display: none; }
+  &__name { font-size: 1.1rem; font-weight: 700; }
+  &__email { font-size: 0.82rem; color: #64748b; }
+  &__badge { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: rgba(37,99,235,0.08); color: #2563eb; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+}
+
+.security-notice {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px;
+  display: flex; gap: 10px; font-size: 0.78rem; color: #64748b; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  svg { flex-shrink: 0; stroke: currentColor; width: 16px; }
+}
+
+// Formularios
+.profile-forms { display: flex; flex-direction: column; }
+.form-section {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 32px 36px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+
+  &__header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+  &__icon {
+    width: 44px; height: 44px; border-radius: 12px; background: rgba(37,99,235,0.08);
+    display: flex; align-items: center; justify-content: center;
+    svg { width: 20px; height: 20px; stroke: #2563eb; }
+    &--red { background: rgba(220,38,38,0.08); svg { stroke: #dc2626; } }
+  }
+  &__title { font-size: 1.05rem; font-weight: 700; }
+  &__desc { font-size: 0.82rem; color: #64748b; }
+}
+.section-divider { height: 20px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+// Input visual con ícono (Para el HTML actual que usaba esto)
+.input-wrap {
+  position: relative;
+  &__icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; stroke: #94a3b8; }
+  &__toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; svg { width: 16px; }}
+  &:focus-within .input-wrap__icon { stroke: #2563eb; }
+  ::ng-deep .form-input { padding-left: 42px; }
+  &--password ::ng-deep .form-input { padding-right: 42px; }
+}
+
+.form-actions { display: flex; justify-content: flex-end; gap: 12px; padding-top: 4px; }
+
+@media (max-width: 1100px) { .profile-grid { grid-template-columns: 240px 1fr; } .form-section { padding: 24px; } }
+@media (max-width: 900px) { .profile-grid { grid-template-columns: 1fr; } .profile-sidebar { position: static; } .avatar-card { flex-direction: row; text-align: left; gap: 20px; padding: 24px; } }
+@media (max-width: 640px) { .form-row { grid-template-columns: 1fr; } .form-actions { flex-direction: column-reverse; } .btn { justify-content: center; } }

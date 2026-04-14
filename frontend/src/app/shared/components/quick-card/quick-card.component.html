@@ -1,0 +1,7 @@
+<a [routerLink]="route" class="quick-card">
+  <div class="quick-card__icon" [ngClass]="iconClass">
+    <ng-content select="[card-icon]"></ng-content>
+  </div>
+  <h3 class="quick-card__name">{{ titulo }}</h3>
+  <p class="quick-card__desc">{{ descripcion }}</p>
+</a>

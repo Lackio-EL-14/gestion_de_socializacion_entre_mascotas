@@ -1,0 +1,16 @@
+<div class="role-card">
+  <div class="icon-circle" [ngClass]="roleType === 'owner' ? 'icon-owner' : 'icon-worker'">
+
+    <svg *ngIf="roleType === 'owner'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+
+    <svg *ngIf="roleType === 'worker'" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;">
+      <rect x="3" y="8" width="18" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+    </svg>
+
+  </div>
+
+  <h3 class="role-title">{{ title }}</h3>
+  <p class="role-text">{{ description }}</p>
+</div>

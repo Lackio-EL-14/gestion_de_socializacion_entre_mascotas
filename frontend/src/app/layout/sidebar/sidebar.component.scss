@@ -1,0 +1,75 @@
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: #0f172a;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 24px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+
+  &__brand {
+    padding: 0 24px 28px;
+    &-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #2563eb;
+      letter-spacing: -0.3px;
+    }
+  }
+
+  &__nav {
+    flex: 1;
+    &-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0 12px;
+    }
+    &-item {
+      border-radius: 10px;
+      transition: background 0.2s ease;
+      &:hover { background: rgba(255, 255, 255, 0.07); }
+
+      &--active {
+        background: rgba(37, 99, 235, 0.15);
+        .sidebar__nav-link { color: #2563eb; font-weight: 600; }
+        .sidebar__icon { color: #2563eb; }
+      }
+    }
+  }
+
+  &__nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 10px;
+    transition: color 0.2s ease;
+    &:hover { color: #fff; }
+  }
+
+  &__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    stroke: currentColor;
+  }
+
+  &__footer {
+    padding: 12px 12px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 8px;
+    .sidebar__nav-link:hover { color: #f87171; }
+  }
+
+  &__logout:hover { background: rgba(248, 113, 113, 0.1); }
+}
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+}

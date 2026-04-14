@@ -1,0 +1,44 @@
+.quick-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 28px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e1;
+  }
+
+  &__icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ::ng-deep svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+    }
+
+    &--blue { background: #dbeafe; color: #2563eb; }
+    &--green { background: #d1fae5; color: #059669; }
+    &--purple { background: #ede9fe; color: #7c3aed; }
+    &--orange { background: #ffedd5; color: #ea580c; }
+  }
+
+  &__name { font-size: 0.9rem; font-weight: 700; color: #0f172a; }
+  &__desc { font-size: 0.8rem; color: #64748b; line-height: 1.4; }
+}

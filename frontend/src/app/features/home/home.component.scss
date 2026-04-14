@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  background: linear-gradient(90deg, #eef3fb 0%, #f7f7f8 55%, #f8f4ef 100%);
+  min-height: 100vh;
+}
+
+.page-wrapper { padding: 4px; }
+.home-shell { min-height: calc(100vh - 8px); border-radius: 10px; overflow: hidden; }
+
+.hero {
+  max-width: 1100px; margin: 0 auto; padding: 150px 24px 60px; text-align: center;
+  &-title { font-size: 4rem; font-weight: 800; color: #111827; letter-spacing: -1px; margin-bottom: 14px; }
+  &-subtitle { font-size: 1.15rem; color: #475569; max-width: 760px; margin: 0 auto 48px; line-height: 1.55; }
+}
+
+.role-cards { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+
+// Asumiendo que <app-role-card-owner> contiene esta estructura internamente:
+::ng-deep .role-card {
+  width: 100%; max-width: 320px; min-height: 300px; background: #fff;
+  border: 1px solid rgba(17, 24, 39, 0.08); border-radius: 16px; padding: 30px 28px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+
+  &:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(0, 0, 0, 0.12); }
+}
+
+@media (max-width: 900px) { .hero { padding-top: 110px; } .hero-title { font-size: 3rem; } }
+@media (max-width: 640px) { .hero { padding: 90px 18px 40px; } .hero-title { font-size: 2.35rem; } }

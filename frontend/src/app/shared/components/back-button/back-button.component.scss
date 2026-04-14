@@ -1,0 +1,21 @@
+.top-link {
+  margin-bottom: 20px;
+
+  .back-btn {
+    background: transparent;
+    border: none;
+    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #2563eb;
+    }
+  }
+}

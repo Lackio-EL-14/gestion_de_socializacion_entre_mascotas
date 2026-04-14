@@ -1,0 +1,13 @@
+<div class="modal-overlay" *ngIf="visible">
+  <div class="modal-card">
+    <div class="modal-icon" [ngClass]="tipo">
+      <span *ngIf="tipo === 'success'">✓</span>
+      <span *ngIf="tipo === 'error'">!</span>
+    </div>
+    <h2 class="modal-title">{{ titulo }}</h2>
+    <p class="modal-message">{{ mensaje }}</p>
+    <button type="button" class="modal-btn" (click)="onClose()">
+      Aceptar
+    </button>
+  </div>
+</div>

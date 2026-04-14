@@ -1,0 +1,45 @@
+.page-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  color: #7c8aa5;
+  margin-bottom: 32px;
+}
+
+.pet-card {
+  background: #ffffff;
+  border-radius: 16px; // Usando el radio de dashboard
+  padding: 36px 40px;
+  max-width: 600px;
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.photo-upload, .file-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    background: white;
+    border: 1.5px solid #e2e8f0; // Match global input
+    border-radius: 12px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+}
+
+.btn-save {
+  margin-top: 10px;
+  // El resto de los estilos del botón ya los hereda de .btn-submit (asegúrate de que el HTML use class="btn-submit")
+}
+
+@media (max-width: 768px) {
+  .pet-card { padding: 24px; }
+}

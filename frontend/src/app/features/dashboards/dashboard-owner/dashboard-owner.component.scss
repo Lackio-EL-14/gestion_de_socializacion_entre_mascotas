@@ -1,0 +1,28 @@
+.main-header {
+  margin-bottom: 28px;
+  &__title { font-size: 1.75rem; font-weight: 700; color: #0f172a; }
+  &__subtitle { font-size: 0.9rem; color: #64748b; margin-top: 4px; }
+}
+
+.welcome-banner {
+  background: linear-gradient(120deg, #3b5bdb 0%, #9b59b6 45%, #e67e22 100%);
+  border-radius: 14px;
+  padding: 32px 36px;
+  margin-bottom: 36px;
+  color: #fff;
+
+  &__greeting { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+  &__text { font-size: 0.95rem; opacity: 0.9; max-width: 640px; }
+}
+
+.quick-access {
+  &__title { font-size: 1.05rem; font-weight: 700; margin-bottom: 16px; }
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 1100px) { .quick-access__grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .quick-access__grid { grid-template-columns: 1fr; } }

@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  background: linear-gradient(135deg, #dbe9fb 0%, #eef3fb 60%, #fdf4ff 100%);
+}
+
+.page-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  padding: 24px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 520px;
+  padding: 40px 48px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+// ... (Resto de estilos de brand-name y brand-subtitle que te pasé en la respuesta anterior) ...
