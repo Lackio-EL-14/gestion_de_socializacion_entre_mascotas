@@ -160,9 +160,22 @@
     "users": "Usuarios",
     "pets": "Mascotas",
     "configProfile": "Configurar Perfil",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "manageUsers": "Gestión de Usuarios",
+    "manageReports": "Gestión de Reportes",
+    "manageContent": "Gestión de Contenido"
   },
   "dashboard": {
+    "admin": {
+      "title": "Dashboard",
+      "subtitle": "Bienvenido al panel de administración",
+      "metrics": {
+        "totalUsers": "Total de Usuarios",
+        "activeUsers": "Usuarios Activos",
+        "suspendedUsers": "Usuarios Suspendidos",
+        "pendingReports": "Reportes Pendientes"
+      }
+    },
     "owner": {
       "welcome": "Bienvenido a DogChat",
       "subtitle": "Tu plataforma de socializacion para mascotas",

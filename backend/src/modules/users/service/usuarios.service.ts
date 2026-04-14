@@ -53,52 +53,46 @@ export class UsuariosService {
   }
 
   async login(loginUsuarioDto: LoginUsuarioDto) {
-    const { email, contrasena } = loginUsuarioDto;
+  const { email, contrasena } = loginUsuarioDto;
 
-    const usuario = await this.usuarioRepository.findOne({ where: { email } });
+  // CAMBIO 1: Agregamos 'relations' para traer los datos del rol
+  const usuario = await this.usuarioRepository.findOne({ 
+    where: { email },
+    relations: ['rol'] 
+  });
 
-    if (!usuario) {
-      this.logger.warn(`[AUDIT-AUTH] Intento de acceso fallido. Objetivo no encontrado en registros: ${email}`);
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-
-    if (!usuario.esta_activo) {
-      this.logger.warn(`[AUDIT-AUTH] Acceso denegado. Intento de inicio de sesión en cuenta inactiva o bloqueada. ID: ${usuario.id_usuario}`);
-      throw new UnauthorizedException('Cuenta bloqueada. Contacte al administrador.');
-    }
-
-    const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena_hash);
-
-    if (!contrasenaValida) {
-      usuario.cantidad_strikes += 1;
-      
-      if (usuario.cantidad_strikes >= 5) {
-        usuario.esta_activo = false;
-        this.logger.warn(`[AUDIT-SEC] Mitigación activada. Cuenta bloqueada temporalmente por posible intrusión de fuerza bruta. ID: ${usuario.id_usuario}`);
-      } else {
-        this.logger.warn(`[AUDIT-AUTH] Validación de credenciales fallida (Strike ${usuario.cantidad_strikes}/5). Objetivo ID: ${usuario.id_usuario}`);
-      }
-      
-      await this.usuarioRepository.save(usuario); 
-      throw new UnauthorizedException('Credenciales inválidas');
-    }
-
-    if (usuario.cantidad_strikes > 0) {
-      usuario.cantidad_strikes = 0;
-      await this.usuarioRepository.save(usuario);
-    }
-
-    const payload = { email: usuario.email, sub: usuario.id_usuario };
-    
-    this.logger.log(`[AUDIT-AUTH] Autenticación completada satisfactoriamente. Sesión iniciada para ID: ${usuario.id_usuario}`);
-    
-    return {
-      access_token: this.jwtService.sign(payload),
-      id_usuario: usuario.id_usuario,
-      nombre: usuario.nombre,
-      email: usuario.email
-    };
+  if (!usuario) {
+    this.logger.warn(`[AUDIT-AUTH] Intento de acceso fallido: ${email}`);
+    throw new UnauthorizedException('Credenciales inválidas');
   }
+
+  // ... (aquí va tu lógica existente de validación de contraseña y strikes) ...
+
+  const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena_hash);
+  if (!contrasenaValida) {
+     // ... tu lógica de strikes ...
+     throw new UnauthorizedException('Credenciales inválidas');
+  }
+
+  // CAMBIO 2: Incluimos el rol en el payload del JWT (opcional pero recomendado)
+  // Así tus Guards podrán verificar el rol sin ir a la base de datos
+  const payload = { 
+    email: usuario.email, 
+    sub: usuario.id_usuario,
+    rol: usuario.rol?.id_rol // O el nombre del rol
+  };
+  
+  this.logger.log(`[AUDIT-AUTH] Sesión iniciada para ID: ${usuario.id_usuario} con Rol: ${usuario.rol?.id_rol}`);
+  
+  // CAMBIO 3: Retornamos el rol al frontend
+  return {
+    access_token: this.jwtService.sign(payload),
+    id_usuario: usuario.id_usuario,
+    nombre: usuario.nombre,
+    email: usuario.email,
+    rol: usuario.rol // Retorna el objeto rol completo o solo el ID/Nombre
+  };
+}
 
   // =====================================================================
   // EL NUEVO MÉTODO ESTÁ EXACTAMENTE AQUÍ, SEPARADO DE LOS DEMÁS

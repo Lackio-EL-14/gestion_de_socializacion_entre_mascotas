@@ -8,11 +8,17 @@ interface LoginUsuarioRequest {
   contrasena: string;
 }
 
+interface RolResponse {
+  id_rol: number;
+  nombre_rol: string;
+}
+
 interface LoginUsuarioResponse {
   access_token: string;
   nombre: string;
   email: string;
   id_usuario: number;
+  rol: RolResponse; // <- NUEVO CAMPO
 }
 
 @Component({
@@ -88,14 +94,22 @@ export class Login {
     this.http.post<LoginUsuarioResponse>('http://localhost:3000/usuarios/login', body).subscribe({
       next: (respuesta) => {
         console.log('Login exitoso:', respuesta);
- 
+
         sessionStorage.setItem('usuarioEmail', respuesta.email || email);
         localStorage.setItem('id_usuario', String(respuesta.id_usuario));
         localStorage.setItem('access_token', respuesta.access_token);
         sessionStorage.setItem('usuarioNombre', respuesta.nombre);
+        localStorage.setItem('id_rol', String(respuesta.rol?.id_rol || 1));
 
-        this.enviando = false;       
-        this.router.navigate(['/dashboard-owner']);
+        this.enviando = false;
+
+        const idRol = respuesta.rol?.id_rol;
+
+        if (idRol === 2) {
+          this.router.navigate(['/dashboard-admin']);
+        } else {
+          this.router.navigate(['/dashboard-owner']);
+        }
       },
       error: (error) => {
         console.error('Error al iniciar sesión:', error);
