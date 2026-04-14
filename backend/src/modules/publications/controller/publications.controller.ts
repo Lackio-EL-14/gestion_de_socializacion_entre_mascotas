@@ -10,6 +10,7 @@ import {
 import { PublicationsService } from '../service/publications.service';
 import { ModeratePublicationDto } from '../dto/publication.dto';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
+import { Get } from '@nestjs/common';
 
 @Controller('publications')
 export class PublicationsController {
@@ -29,5 +30,11 @@ export class PublicationsController {
       dto,
       adminId
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  findAll() {
+    return this.publicationsService.findAll();
   }
 }

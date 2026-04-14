@@ -50,4 +50,14 @@ export class PublicationsService {
       publication: savedPublication,
     };
   }
+
+  async findAll() {
+    this.logger.log('[AUDIT-PUBLICATIONS] Consulta global de publicaciones ejecutada');
+
+    return await this.publicationRepository.find({
+        order: {
+        fecha_publicacion: 'DESC', // más recientes primero
+        },
+    });
+  }
 }
