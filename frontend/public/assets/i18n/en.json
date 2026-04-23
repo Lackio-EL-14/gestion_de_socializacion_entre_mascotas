@@ -1,4 +1,34 @@
 {
+  "publications": {
+    "see": {
+      "title": "Publications",
+      "subtitle": "Community feed and industry professionals",
+      "avatarAlt": "Publication author avatar",
+      "imageAlt": "Publication image",
+      "likeLabel": "Like",
+      "commentsLabel": "Comments",
+      "empty": {
+        "line1": "There are no publications yet.",
+        "line2": "Be the first to share!"
+      },
+      "loading": "Loading publications...",
+      "createButtonLabel": "Create publication"
+    },
+    "create": {
+      "backLink": "Back to Publications",
+      "title": "Create Publication",
+      "subtitle": "Share special moments of your pet",
+      "imageLabel": "Upload image",
+      "imagePlaceholder": "Click to upload an image",
+      "imageHint": "PNG, JPG up to 10 MB",
+      "previewAlt": "Image preview",
+      "removeImage": "Remove image",
+      "descriptionLabel": "Short description",
+      "descriptionPlaceholder": "What's happening? Share something about your pet...",
+      "submit": "Publish",
+      "discard": "Discard"
+    }
+  },
   "home": {
     "login": "Log in",
     "heroTitle": "Welcome to DogChat",

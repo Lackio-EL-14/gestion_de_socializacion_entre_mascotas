@@ -1,4 +1,34 @@
 {
+  "publications": {
+    "see": {
+      "title": "Publicaciones",
+      "subtitle": "Feed de la comunidad y trabajadores del rubro",
+      "avatarAlt": "Avatar del autor de la publicación",
+      "imageAlt": "Imagen de la publicación",
+      "likeLabel": "Me gusta",
+      "commentsLabel": "Comentarios",
+      "empty": {
+        "line1": "Aún no hay publicaciones.",
+        "line2": "¡Sé el primero en compartir!"
+      },
+      "loading": "Cargando publicaciones...",
+      "createButtonLabel": "Crear publicación"
+    },
+    "create": {
+      "backLink": "Volver a Publicaciones",
+      "title": "Crear Publicación",
+      "subtitle": "Comparte momentos especiales de tu mascota",
+      "imageLabel": "Subir Imagen",
+      "imagePlaceholder": "Click para subir imagen",
+      "imageHint": "PNG, JPG hasta 10MB",
+      "previewAlt": "Vista previa de la imagen",
+      "removeImage": "Quitar imagen",
+      "descriptionLabel": "Descripción Breve",
+      "descriptionPlaceholder": "¿Qué está pasando? Comparte algo sobre tu mascota...",
+      "submit": "Publicar",
+      "discard": "Descartar"
+    }
+  },
   "home": {
     "login": "Iniciar sesion",
     "heroTitle": "Bienvenido a DogChat",
