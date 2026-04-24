@@ -12,6 +12,11 @@ const routes: Routes = [
   { path: 'dashboard-admin', component: DashboardAdmin },
   { path: 'dashboard-edit-owner', component: DashboardEditOwner },
   {
+    path: 'publications',
+    loadChildren: () =>
+      import('./features/publications/publications-module').then(m => m.PublicationsModule)
+  },
+  {
     path: 'pets',
     loadChildren: () =>
       import('./features/pets/pets-module').then(m => m.PetsModule)
@@ -33,6 +38,11 @@ const routes: Routes = [
   },
   {
     path: 'reports',
+    loadChildren: () =>
+      import('./features/reports/reports-module').then(m => m.ReportsModule)
+  },
+  {
+    path: 'admin/reports',
     loadChildren: () =>
       import('./features/reports/reports-module').then(m => m.ReportsModule)
   },
