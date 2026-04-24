@@ -2,11 +2,7 @@ import { APP_INITIALIZER, NgModule, provideBrowserGlobalErrorListeners } from '@
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import {
-  TranslationObject,
-  TranslateLoader,
-  TranslateModule,
-} from '@ngx-translate/core';
+import { TranslationObject, TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 
 import { AppRoutingModule } from './app-routing-module';
@@ -17,6 +13,7 @@ import { DashboardOwner } from './features/dashboards/dashboard-owner/dashboard-
 import { DashboardAdmin } from './features/dashboards/dashboard-admin/dashboard-admin';
 import { DashboardEditOwner } from './features/dashboards/dashboard-edit_owner/dashboard-edit-owner';
 import { SharedModule } from './shared/shared-module';
+import { DashboardWorkerComponent as DashboardWorker} from './features/dashboards/dashboard-worker/dashboard-worker';
 
 class AppTranslateLoader implements TranslateLoader {
   constructor(private readonly http: HttpClient) {}
@@ -37,7 +34,7 @@ export function initializeLanguage(languageService: LanguageService): () => void
 }
 
 @NgModule({
-  declarations: [App, Home, DashboardOwner, DashboardEditOwner, DashboardAdmin],
+  declarations: [App, Home, DashboardOwner, DashboardEditOwner, DashboardAdmin, DashboardWorker],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -51,7 +48,7 @@ export function initializeLanguage(languageService: LanguageService): () => void
         deps: [HttpClient],
       },
     }),
-    SharedModule
+    SharedModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
