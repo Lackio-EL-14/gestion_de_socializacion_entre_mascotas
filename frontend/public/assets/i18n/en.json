@@ -639,5 +639,15 @@
         "processFailed": "Error processing the report"
       }
     }
+  },
+  "publications": {
+    "myPublications": {
+      "title": "My Publications",
+      "subtitle": "Manage and review the status of your publications"
+    },
+    "see": {
+      "title": "Publications",
+      "subtitle": "Community and industry worker feed"
+    }
   }
 }
