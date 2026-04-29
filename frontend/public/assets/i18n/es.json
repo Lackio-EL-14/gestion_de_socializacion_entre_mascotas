@@ -639,5 +639,15 @@
         "processFailed": "Error al procesar el reporte"
       }
     }
+  },
+  "publications": {
+    "myPublications": {
+      "title": "Mis Publicaciones",
+      "subtitle": "Administra y revisa el estado de tus publicaciones"
+    },
+    "see":{
+      "title": "Publicaciones",
+      "subtitle": "Feed de la comunidad y trabajadores del rubro"
+    }
   }
 }
