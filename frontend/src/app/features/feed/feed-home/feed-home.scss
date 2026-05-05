@@ -733,6 +733,10 @@ button { cursor: pointer; font-family: $font-family; border: none; background: n
   }
 }
 
+.selected-pet-name {
+  color: #2563eb;
+}
+
 @keyframes matchPop {
   from {
     opacity: 0;

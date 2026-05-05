@@ -68,7 +68,8 @@ export class FeedHome implements OnInit, OnDestroy {
   isHuesitoLiked = false;
   showHuesitoReaction = false;
   errorMessage = '';
-
+  
+  nombreMascotaElegida = '';
   mascotaOrigenId: number | null = null;
   listaPerros: RandomPetResponse[] = [];
 
@@ -100,6 +101,7 @@ export class FeedHome implements OnInit, OnDestroy {
     }
 
     this.mascotaOrigenId = idMascota;
+    this.nombreMascotaElegida = history.state?.nombreMascota || '';
 
     this.route.queryParamMap.subscribe((params) => {
       this.activeFilters = this.parseFilters(params);

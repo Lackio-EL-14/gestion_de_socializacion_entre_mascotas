@@ -72,7 +72,11 @@ export class ChoosePetComponent implements OnInit {
   }
 
   elegirMascota(idMascota: number): void {
-    this.router.navigate(['/feed/home', idMascota]);
+    const mascota = this.mascotas.find(m => m.id_mascota === idMascota);
+
+    this.router.navigate(['/feed/home', idMascota], {
+    state: { nombreMascota: mascota?.nombre || '' }
+    });
   }
 
   crearMascota(): void {
