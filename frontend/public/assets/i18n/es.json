@@ -261,6 +261,21 @@
       "apply": "Aplicar Filtros",
       "clear": "Limpiar Filtros",
       "cancel": "Cancelar"
+    },
+    "choosePet": {
+      "title": "Elige tu mascota",
+      "subtitle": "Selecciona con cuál de tus mascotas quieres buscar un match",
+      "loading": "Cargando tus mascotas...",
+      "choose": "Elegir",
+      "createPet": "Registrar mascota",
+      "emptyTitle": "Aún no tienes mascotas",
+      "emptyMessage": "Registra una mascota para poder buscar matches.",
+      "noName": "Sin nombre",
+      "noBreed": "Sin raza",
+      "errors": {
+        "noSession": "No hay sesión activa.",
+        "loadFailed": "No se pudieron cargar tus mascotas."
+      }
     }
   },
   "sidebar": {

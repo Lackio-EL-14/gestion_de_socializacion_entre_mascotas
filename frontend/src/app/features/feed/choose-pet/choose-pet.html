@@ -1,0 +1,60 @@
+<div class="layout">
+  <app-sidebar-owner></app-sidebar-owner>
+
+  <main class="main-content">
+
+    <div class="top-link">
+      <button type="button" class="back-btn" routerLink="/dashboard-owner">
+        ← {{ 'pets.common.backToDashboard' | translate }}
+      </button>
+    </div>
+
+    <header class="choose-header">
+      <h1>{{ 'feed.choosePet.title' | translate }}</h1>
+      <p>{{ 'feed.choosePet.subtitle' | translate }}</p>
+    </header>
+
+    <div *ngIf="cargando" class="state-message">
+      {{ 'feed.choosePet.loading' | translate }}
+    </div>
+
+    <div *ngIf="error" class="state-message error">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!cargando && !error && mascotas.length === 0" class="empty-card">
+      <h2>{{ 'feed.choosePet.emptyTitle' | translate }}</h2>
+      <p>{{ 'feed.choosePet.emptyMessage' | translate }}</p>
+
+      <button type="button" class="create-btn" (click)="crearMascota()">
+        {{ 'feed.choosePet.createPet' | translate }}
+      </button>
+    </div>
+
+    <div *ngIf="!cargando && !error && mascotas.length > 0" class="pets-grid">
+      <article class="pet-card" *ngFor="let mascota of mascotas">
+        <img
+          class="pet-image"
+          [src]="imagenPlaceholder"
+          [alt]="getNombreSeguro(mascota.nombre)"
+        />
+
+        <div class="pet-info">
+          <h2 class="pet-name">{{ getNombreSeguro(mascota.nombre) }}</h2>
+          <p class="pet-breed">{{ getRazaSegura(mascota.raza) }}</p>
+
+          <div class="pet-meta">
+            <span>{{ mascota.edad }} {{ 'pets.common.years' | translate }}</span>
+            <span>{{ mascota.tamano }}</span>
+            <span>{{ mascota.genero }}</span>
+          </div>
+
+          <button type="button" class="choose-btn" (click)="elegirMascota(mascota.id_mascota)">
+            {{ 'feed.choosePet.choose' | translate }}
+          </button>
+        </div>
+      </article>
+    </div>
+
+  </main>
+</div>

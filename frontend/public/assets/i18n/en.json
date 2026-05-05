@@ -261,6 +261,21 @@
       "apply": "Apply Filters",
       "clear": "Clear Filters",
       "cancel": "Cancel"
+    },
+    "choosePet": {
+      "title": "Choose your pet",
+      "subtitle": "Select which of your pets you want to use to find a match",
+      "loading": "Loading your pets...",
+      "choose": "Choose",
+      "createPet": "Register pet",
+      "emptyTitle": "You don't have pets yet",
+      "emptyMessage": "Register a pet to start finding matches.",
+      "noName": "No name",
+      "noBreed": "No breed",
+      "errors": {
+        "noSession": "There is no active session.",
+        "loadFailed": "Could not load your pets."
+      }
     }
   },
   "sidebar": {

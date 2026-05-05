@@ -69,10 +69,7 @@ export class FeedHome implements OnInit, OnDestroy {
   showHuesitoReaction = false;
   errorMessage = '';
 
-  misMascotas: MascotaOrigen[] = [];
   mascotaOrigenId: number | null = null;
-  cargandoMisMascotas = false;
-  errorMisMascotas = '';
   listaPerros: RandomPetResponse[] = [];
 
   matchModalVisible = false;
@@ -95,10 +92,19 @@ export class FeedHome implements OnInit, OnDestroy {
       return;
     }
 
-    this.obtenerMisMascotas();
+    const idMascota = Number(this.route.snapshot.paramMap.get('idMascota'));
+
+    if (!Number.isInteger(idMascota) || idMascota <= 0) {
+      this.router.navigate(['/feed']);
+      return;
+    }
+
+    this.mascotaOrigenId = idMascota;
 
     this.route.queryParamMap.subscribe((params) => {
       this.activeFilters = this.parseFilters(params);
+      this.listaPerros = [];
+      this.pet = null;
       void this.loadPet();
     });
 
@@ -369,41 +375,6 @@ export class FeedHome implements OnInit, OnDestroy {
     return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : null;
   }
 
-  obtenerMisMascotas(): void {
-    const token = localStorage.getItem('access_token');
-
-    if (!token) {
-      this.errorMisMascotas = this.t('feed.errors.noSession');
-      return;
-    }
-
-    this.cargandoMisMascotas = true;
-    this.errorMisMascotas = '';
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    this.http.get<MascotaOrigen[] | MascotaOrigen>(`${this.apiBaseUrl}/pets/my-pets`, { headers })
-      .subscribe({
-        next: (respuesta) => {
-          this.misMascotas = Array.isArray(respuesta) ? respuesta : [respuesta];
-
-          if (this.misMascotas.length === 1) {
-            this.mascotaOrigenId = this.misMascotas[0].id_mascota;
-            void this.loadPet();
-          }
-
-          this.cargandoMisMascotas = false;
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error al cargar mis mascotas:', error);
-          this.errorMisMascotas = this.t('feed.errors.myPetsLoadFailed');
-          this.cargandoMisMascotas = false;
-          this.cdr.detectChanges();
-        }
-      });
-  }
-
   private registrarInteraccion(tipoAccion: 'LIKE' | 'REJECT'): void {
     if (!this.mascotaOrigenId || !this.pet) {
       return;
@@ -478,17 +449,4 @@ export class FeedHome implements OnInit, OnDestroy {
     this.matchNombreMascota = '';
     this.avanzarSiguienteMascota();
   }
-
-  onMascotaOrigenChange(): void {
-    this.listaPerros = [];
-    this.pet = null;
-    this.errorMessage = '';
-
-    if (!this.mascotaOrigenId) {
-      return;
-    }
-
-    void this.loadPet();
-  }
 }
-
