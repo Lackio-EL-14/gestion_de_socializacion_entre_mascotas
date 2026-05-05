@@ -13,7 +13,11 @@
           <p class="filters-header__subtitle">{{ 'feed.filters.subtitle' | translate }}</p>
         </div>
         <!-- Botón cerrar / volver al feed -->
-        <a routerLink="/feed" class="filters-header__close" aria-label="Cerrar filtros">
+        <a
+          [routerLink]="idMascota ? ['/feed/home', idMascota] : ['/feed']"
+          class="filters-header__close"
+          aria-label="Cerrar filtros"
+        >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
             <line x1="18" y1="6" x2="6" y2="18"/>
             <line x1="6" y1="6" x2="18" y2="18"/>
@@ -205,7 +209,12 @@
 
           <!-- Cancelar -->
           <div class="filter-cancel">
-            <a routerLink="/feed" class="btn-cancel">{{ 'feed.filters.cancel' | translate }}</a>
+            <a
+              [routerLink]="idMascota ? ['/feed/home', idMascota] : ['/feed']"
+              class="btn-cancel"
+            >
+              {{ 'feed.filters.cancel' | translate }}
+            </a>
           </div>
 
         </form>
