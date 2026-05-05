@@ -19,7 +19,12 @@
   <p class="page-header__subtitle">Desliza para encontrar el amigo perfecto para tu perrito</p>
 
   <!-- Botón filtros -->
-  <a routerLink="/feed/filtros" queryParamsHandling="preserve" class="btn-filtros">
+  <a
+    routerLink="/feed/filtros"
+    [queryParams]="{ idMascota: mascotaOrigenId }"
+    queryParamsHandling="merge"
+    class="btn-filtros"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
       <line x1="4" y1="6" x2="20" y2="6"/>
       <line x1="8" y1="12" x2="16" y2="12"/>
@@ -28,37 +33,6 @@
     Filtros de Búsqueda
   </a>
 </header>
-
-  <div class="pet-selector-card">
-    <label for="mascotaOrigen" class="pet-selector-label">
-      {{ 'feed.selector.label' | translate }}
-    </label>
-
-    <select
-      id="mascotaOrigen"
-      name="mascotaOrigen"
-      class="pet-selector"
-      [(ngModel)]="mascotaOrigenId"
-      (ngModelChange)="onMascotaOrigenChange()"
-      [disabled]="cargandoMisMascotas || misMascotas.length === 0"
-    >
-      <option [ngValue]="null">
-        {{ 'feed.selector.placeholder' | translate }}
-      </option>
-
-      <option *ngFor="let mascota of misMascotas" [ngValue]="mascota.id_mascota">
-        {{ mascota.nombre }}
-      </option>
-    </select>
-
-    <small *ngIf="!mascotaOrigenId" class="pet-selector-help">
-      {{ 'feed.selector.help' | translate }}
-    </small>
-
-    <small *ngIf="errorMisMascotas" class="pet-selector-help error">
-      {{ errorMisMascotas }}
-    </small>
-  </div>
 
       <!-- Área centrada de la tarjeta -->
       <div class="match-stage">
