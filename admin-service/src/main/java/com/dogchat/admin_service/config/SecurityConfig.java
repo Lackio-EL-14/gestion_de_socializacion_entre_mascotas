@@ -43,7 +43,8 @@ public class SecurityConfig {
         
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:4200", 
-            "https://dogchat-frontend.onrender.com"
+            "https://dogchat-frontend.onrender.com",
+            "https://admin-service-dogchat.onrender.com"
         ));
         
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
