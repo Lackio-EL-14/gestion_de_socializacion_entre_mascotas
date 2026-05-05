@@ -15,7 +15,12 @@
     <main class="main-content">
 
       <header class="page-header">
-  <h1 class="page-header__title">Encuentra tu Match</h1>
+  <h1 class="page-header__title">
+    Encuentra tu Match para
+    <span *ngIf="nombreMascotaElegida" class="selected-pet-name">
+      {{ nombreMascotaElegida }}
+    </span>
+  </h1>
   <p class="page-header__subtitle">Desliza para encontrar el amigo perfecto para tu perrito</p>
 
   <!-- Botón filtros -->
