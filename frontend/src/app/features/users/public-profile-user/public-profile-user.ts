@@ -151,7 +151,10 @@ export class PublicProfileUserComponent implements OnInit {
     }
 
     this.router.navigate(['/reports/create-report'], {
-      state: { id_usuario_reported: this.usuario.id_usuario }
+      state: {
+        id_usuario_reported: this.usuario.id_usuario,
+        returnUrl: '/users'
+      }
     });
   }
 
