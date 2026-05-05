@@ -37,6 +37,7 @@ export class CreateReportComponent {
   modalTitulo = '';
   modalMensaje = '';
   modalTipo: 'success' | 'error' = 'success';
+  returnUrl = '/feed';
 
   readonly motivoMaxLength = 80;
   readonly comentarioMaxLength = 500;
@@ -51,6 +52,8 @@ export class CreateReportComponent {
     const rawId = history.state?.id_usuario_reported;
     this.idUsuarioReportado =
       Number.isInteger(Number(rawId)) && Number(rawId) > 0 ? Number(rawId) : null;
+
+    this.returnUrl = history.state?.returnUrl || '/feed';
   }
 
   submit(): void {
@@ -149,14 +152,14 @@ export class CreateReportComponent {
   }
 
   cancelar(): void {
-    this.router.navigate(['/users']);
+    this.router.navigateByUrl(this.returnUrl);
   }
 
   cerrarModal(): void {
     this.modalVisible = false;
 
     if (this.modalTipo === 'success') {
-      this.router.navigate(['/users']);
+      this.router.navigateByUrl(this.returnUrl);
     }
   }
 

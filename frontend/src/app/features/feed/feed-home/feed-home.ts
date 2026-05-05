@@ -166,12 +166,15 @@ export class FeedHome implements OnInit, OnDestroy {
   }
 
   goToReport(): void {
-    if (!this.pet?.id_usuario) {
+    if (!this.pet?.id_usuario || !this.mascotaOrigenId) {
       return;
     }
 
     this.router.navigate(['/reports/create-report'], {
-      state: { id_usuario_reported: this.pet.id_usuario },
+      state: {
+        id_usuario_reported: this.pet.id_usuario,
+        returnUrl: `/feed/home/${this.mascotaOrigenId}`
+      },
     });
   }
 
