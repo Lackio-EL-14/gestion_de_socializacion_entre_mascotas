@@ -2,7 +2,7 @@
   "publications": {
     "see": {
       "title": "Publications",
-      "subtitle": "Community feed and industry professionals",
+      "subtitle": "Community and industry worker feed",
       "avatarAlt": "Publication author avatar",
       "imageAlt": "Publication image",
       "likeLabel": "Like",
@@ -43,6 +43,10 @@
         "createFailed": "Could not create publication. Please try again.",
         "createSuccess": "Publication created successfully."
       }
+    },
+    "myPublications": {
+      "title": "My Publications",
+      "subtitle": "Manage and review the status of your publications"
     }
   },
   "home": {
@@ -653,16 +657,6 @@
         "loadFailed": "Could not load the report",
         "processFailed": "Error processing the report"
       }
-    }
-  },
-  "publications": {
-    "myPublications": {
-      "title": "My Publications",
-      "subtitle": "Manage and review the status of your publications"
-    },
-    "see": {
-      "title": "Publications",
-      "subtitle": "Community and industry worker feed"
     }
   }
 }
