@@ -16,8 +16,12 @@
             id="motivo"
             name="motivo"
             [(ngModel)]="motivo"
+            [maxlength]="motivoMaxLength"
             [placeholder]="'reports.create.form.subjectPlaceholder' | translate"
           />
+          <small class="char-counter">
+            {{ motivo.length }}/{{ motivoMaxLength }}
+          </small>
         </div>
 
         <div class="form-group">
@@ -37,8 +41,12 @@
             name="comentario"
             [(ngModel)]="comentario"
             rows="4"
+            [maxlength]="comentarioMaxLength"
             [placeholder]="'reports.create.form.commentPlaceholder' | translate"
           ></textarea>
+          <small class="char-counter">
+            {{ comentario.length }}/{{ comentarioMaxLength }}
+          </small>
         </div>
 
         <div class="actions">
