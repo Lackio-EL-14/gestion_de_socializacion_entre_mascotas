@@ -258,12 +258,10 @@
     color: #333;
     border-bottom-left-radius: 4px;
   }
-
   &.pending-message .message-content {
     opacity: 0.82;
     border: 1px dashed rgba(76, 175, 80, 0.28);
   }
-
   .message-text {
     margin: 0 0 4px 0;
     font-size: 14px;

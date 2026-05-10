@@ -439,7 +439,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private clearStoredSelectedMatchId(): void {
     localStorage.removeItem(this.selectedMatchStorageKey);
   }
-
   /**
    * Envía un mensaje
    */
@@ -525,7 +524,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   isPendingMessage(message: ChatMessage): boolean {
     return message.pending === true;
   }
-
   /**
    * Formatea la fecha para mostrar
    */
@@ -604,7 +602,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private getCurrentSelectedMatchId(): number | null {
     return this.selectedChat?.match.id_match ?? null;
   }
-
   /**
    * Scroll al último mensaje
    */
