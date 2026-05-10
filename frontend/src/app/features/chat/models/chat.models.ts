@@ -24,6 +24,7 @@ export interface ChatMessage {
   contenido: string;
   fecha_envio: string;
   usuario_remitente: UsuarioRemitente;
+  pending?: boolean;
 }
 
 export interface LastMessage {

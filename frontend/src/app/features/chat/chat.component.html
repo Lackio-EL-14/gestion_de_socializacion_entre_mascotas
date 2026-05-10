@@ -25,7 +25,9 @@
 
     <!-- Loading inbox -->
     <div *ngIf="loadingInbox" class="loading-spinner">
-      Cargando conversaciones...
+      <div class="loading-row loading-row--title"></div>
+      <div class="loading-row"></div>
+      <div class="loading-row loading-row--short"></div>
     </div>
 
     <!-- Lista de conversaciones -->
@@ -77,7 +79,10 @@
 
       <!-- Loading mensajes -->
       <div *ngIf="loadingMessages" class="loading-spinner">
-        Cargando mensajes...
+        <div class="message-skeleton" *ngFor="let item of [1,2,3]">
+          <div class="message-skeleton__bubble"></div>
+          <div class="message-skeleton__meta"></div>
+        </div>
       </div>
 
       <!-- Lista de mensajes -->
@@ -89,6 +94,7 @@
         <div
           *ngFor="let message of messages"
           class="message"
+          [class.pending-message]="isPendingMessage(message)"
           [class.own-message]="isOwnMessage(message)"
           [class.other-message]="!isOwnMessage(message)"
         >
@@ -97,6 +103,7 @@
             <span class="message-time">
               {{ formatDate(message.fecha_envio) }}
             </span>
+            <small *ngIf="isPendingMessage(message)" class="message-pending-label">Enviando...</small>
           </div>
         </div>
       </div>

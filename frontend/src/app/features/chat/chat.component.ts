@@ -20,6 +20,8 @@ interface UsuarioMascota {
 })
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messageList') messageList!: ElementRef;
+  private readonly selectedMatchStorageKey = 'chat_selected_match_id';
+  private readonly pendingMessageTimeoutMs = 12000;
 
   // Estado del componente
   inboxChats: InboxChat[] = [];
@@ -116,7 +118,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
           console.log(`[Chat] Inbox cargado: ${chats.length} conversaciones para mascota ${this.currentMascotaId}`);
           this.inboxChats = chats;
           this.syncSelectedChatAfterInboxRefresh();
-          if (!this.selectedChat && this.inboxChats.length > 0) {
+          const storedMatchId = this.getStoredSelectedMatchId();
+          const storedChat = storedMatchId
+            ? this.inboxChats.find(chat => chat.match.id_match === storedMatchId) ?? null
+            : null;
+
+          if (!this.selectedChat && storedChat) {
+            console.log(`[Chat] Restaurando conversación guardada: match_${storedChat.match.id_match}`);
+            this.selectChat(storedChat);
+          } else if (!this.selectedChat && this.inboxChats.length > 0) {
             const chatMasReciente = this.inboxChats[0];
             console.log(`[Chat] Auto-seleccionando primer chat: match_${chatMasReciente.match.id_match}`);
             this.selectChat(chatMasReciente);
@@ -124,6 +134,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             console.log(`[Chat] Inbox vacío para mascota ${this.currentMascotaId}`);
             this.selectedChat = null;
             this.messages = [];
+            this.clearStoredSelectedMatchId();
           }
           this.loadingInbox = false;
           this.cdr.detectChanges();
@@ -150,6 +161,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   selectChat(chat: InboxChat): void {
     console.log(`[Chat] Seleccionando chat: match_${chat.match.id_match}, con ${chat.match.mascota_2.nombre}`);
     this.selectedChat = chat;
+    this.persistSelectedChat(chat.match.id_match);
     this.messages = [];
     this.messageInput = '';
     this.errorMessages = null;
@@ -201,12 +213,22 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (message: ChatMessage) => {
-          // Evitar duplicados: no agregar si ya existe el mensaje
-          const messageExists = this.messages.some(m => m.id_mensaje === message.id_mensaje);
-          if (!messageExists) {
-            this.messages.push(message);
+          const pendingIndex = this.findMatchingPendingMessageIndex(message);
+
+          if (pendingIndex >= 0) {
+            this.messages[pendingIndex] = { ...message };
             this.shouldScroll = true;
+          } else {
+            // Evitar duplicados: no agregar si ya existe el mensaje
+            const messageExists = this.messages.some(m => m.id_mensaje === message.id_mensaje);
+            if (!messageExists) {
+              this.messages.push(message);
+              this.shouldScroll = true;
+            }
           }
+
+          this.syncSelectedChatPreview(message);
+          this.cdr.detectChanges();
         },
         error: (err: unknown) => {
           console.error('Error en recepción de mensajes:', err);
@@ -352,6 +374,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     // Limpiar ATOMICAMENTE todo el estado ANTES de actualizar currentMascotaId
     this.selectedChat = null;
+    this.clearStoredSelectedMatchId();
     this.messages = [];
     this.messageInput = '';
     this.errorMessages = null;
@@ -402,6 +425,21 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.selectedChat = refreshed;
   }
 
+  private persistSelectedChat(idMatch: number): void {
+    localStorage.setItem(this.selectedMatchStorageKey, String(idMatch));
+  }
+
+  private getStoredSelectedMatchId(): number | null {
+    const rawValue = localStorage.getItem(this.selectedMatchStorageKey);
+    const parsedValue = rawValue ? Number(rawValue) : null;
+
+    return parsedValue && Number.isInteger(parsedValue) && parsedValue > 0 ? parsedValue : null;
+  }
+
+  private clearStoredSelectedMatchId(): void {
+    localStorage.removeItem(this.selectedMatchStorageKey);
+  }
+
   /**
    * Envía un mensaje
    */
@@ -410,14 +448,22 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       return;
     }
 
+    const contenido = this.messageInput.trim();
+    const pendingMessage = this.createPendingMessage(contenido);
+    this.messages.push(pendingMessage);
+    this.shouldScroll = true;
+    this.messageInput = '';
+    this.errorMessages = null;
+    this.syncSelectedChatPreview(pendingMessage);
+    this.cdr.detectChanges();
+
     const payload: SendMessagePayload = {
       idMatch: this.selectedChat.match.id_match,
       idUsuario: this.currentUserId,
-      contenido: this.messageInput.trim()
+      contenido
     };
 
     this.socketService.sendMessage(payload);
-    this.messageInput = '';
   }
 
   /**
@@ -476,6 +522,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     return match.mascota_2.nombre;
   }
 
+  isPendingMessage(message: ChatMessage): boolean {
+    return message.pending === true;
+  }
+
   /**
    * Formatea la fecha para mostrar
    */
@@ -496,6 +546,63 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
     }
+  }
+
+  private createPendingMessage(contenido: string): ChatMessage {
+    const tempId = -Date.now();
+
+    return {
+      id_mensaje: tempId,
+      contenido,
+      fecha_envio: new Date().toISOString(),
+      usuario_remitente: {
+        id_usuario: this.currentUserId ?? 0,
+        nombres: 'Tú'
+      },
+      pending: true
+    };
+  }
+
+  private findMatchingPendingMessageIndex(message: ChatMessage): number {
+    if (!this.currentUserId || message.usuario_remitente.id_usuario !== this.currentUserId) {
+      return -1;
+    }
+
+    return this.messages.findIndex(existing => {
+      if (!existing.pending) {
+        return false;
+      }
+
+      return existing.contenido === message.contenido && existing.usuario_remitente.id_usuario === message.usuario_remitente.id_usuario;
+    });
+  }
+
+  private syncSelectedChatPreview(message: ChatMessage): void {
+    if (!this.selectedChat || this.selectedChat.match.id_match !== this.getCurrentSelectedMatchId()) {
+      return;
+    }
+
+    const updatedLastMessage = {
+      id_mensaje: message.id_mensaje,
+      contenido: message.contenido,
+      fecha_envio: message.fecha_envio,
+      usuario_remitente: message.usuario_remitente
+    };
+
+    this.selectedChat = {
+      ...this.selectedChat,
+      lastMessage: updatedLastMessage
+    };
+
+    this.inboxChats = this.inboxChats.map(chat =>
+      chat.match.id_match === this.selectedChat?.match.id_match
+        ? { ...chat, lastMessage: updatedLastMessage }
+        : chat
+    );
+  }
+
+  private getCurrentSelectedMatchId(): number | null {
+    return this.selectedChat?.match.id_match ?? null;
   }
 
   /**
