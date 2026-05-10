@@ -22,6 +22,16 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   constructor(private readonly messagesService: MessagesService) {}
 
+  notifyMatchCreated(match: {
+    id_match: number;
+    mascota_1: { id_mascota: number };
+    mascota_2: { id_mascota: number };
+    fecha_match?: Date;
+    activo?: boolean;
+  }) {
+    this.server.emit('matchCreated', { match });
+  }
+
   handleConnection(client: Socket) {
     console.log(`Cliente conectado al Chat: ${client.id}`);
   }

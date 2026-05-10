@@ -65,6 +65,26 @@ const routes: Routes = [
       import('./features/pets/pets-module').then(m => m.PetsModule)
   },
   {
+    path: 'chat',
+    loadChildren: () =>
+      import('./features/chat/chat-module').then(m => m.ChatModule)
+  },
+  {
+    path: 'chats',
+    redirectTo: 'chat',
+    pathMatch: 'full'
+  },
+  {
+    path: 'worker/chats',
+    redirectTo: 'chat',
+    pathMatch: 'full'
+  },
+  {
+    path: 'owner/chats',
+    redirectTo: 'chat',
+    pathMatch: 'full'
+  },
+  {
     path: 'feed',
     loadChildren: () =>
       import('./features/feed/feed-module').then(m => m.FeedModule)
