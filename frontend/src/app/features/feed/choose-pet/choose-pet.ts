@@ -73,6 +73,7 @@ export class ChoosePetComponent implements OnInit {
 
   elegirMascota(idMascota: number): void {
     const mascota = this.mascotas.find(m => m.id_mascota === idMascota);
+    localStorage.setItem('id_mascota_actual', String(idMascota));
 
     this.router.navigate(['/feed/home', idMascota], {
     state: { nombreMascota: mascota?.nombre || '' }

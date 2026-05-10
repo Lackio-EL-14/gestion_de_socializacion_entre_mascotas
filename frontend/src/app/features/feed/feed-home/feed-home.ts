@@ -43,6 +43,7 @@ interface MascotaOrigen {
 
 interface InteractionResponse {
   match: boolean;
+  id_match?: number;
 }
 
 @Component({
@@ -101,6 +102,7 @@ export class FeedHome implements OnInit, OnDestroy {
     }
 
     this.mascotaOrigenId = idMascota;
+    localStorage.setItem('id_mascota_actual', String(idMascota));
     this.nombreMascotaElegida = history.state?.nombreMascota || '';
 
     this.route.queryParamMap.subscribe((params) => {
@@ -403,6 +405,9 @@ export class FeedHome implements OnInit, OnDestroy {
             this.dispararAnimacionHuesito();
 
             if (respuesta.match === true) {
+              if (respuesta.id_match) {
+                localStorage.setItem('last_match_id', String(respuesta.id_match));
+              }
               this.matchNombreMascota = nombreMascotaDestino;
               this.matchModalVisible = true;
               this.isLoading = false;
@@ -453,5 +458,14 @@ export class FeedHome implements OnInit, OnDestroy {
     this.matchModalVisible = false;
     this.matchNombreMascota = '';
     this.avanzarSiguienteMascota();
+  }
+
+  irAChats(): void {
+    this.matchModalVisible = false;
+    this.matchNombreMascota = '';
+    const idMatch = localStorage.getItem('last_match_id');
+    void this.router.navigate(['/chats'], {
+      queryParams: idMatch ? { idMatch } : {}
+    });
   }
 }

@@ -10,6 +10,6 @@ import { MessagesGateway } from './gateway/messages.gateway';
   imports: [TypeOrmModule.forFeature([Mensaje, Match])],
   controllers: [MessagesController],
   providers: [MessagesService, MessagesGateway],
-  exports: [MessagesService],
+  exports: [MessagesService, MessagesGateway],
 })
 export class MessagesModule {}
