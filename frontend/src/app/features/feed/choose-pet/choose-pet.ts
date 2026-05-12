@@ -12,6 +12,7 @@ interface Mascota {
   genero: string;
   estado_salud: string;
   vacuna_imagen_url: string | null;
+  perfil_imagen_url: string | null;
   fecha_registro: string;
   id_usuario: number;
 }

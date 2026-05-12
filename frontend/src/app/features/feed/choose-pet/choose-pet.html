@@ -35,7 +35,7 @@
       <article class="pet-card" *ngFor="let mascota of mascotas">
         <img
           class="pet-image"
-          [src]="imagenPlaceholder"
+          [src]="mascota.perfil_imagen_url || imagenPlaceholder"
           [alt]="getNombreSeguro(mascota.nombre)"
         />
 

@@ -45,6 +45,9 @@ export class CreatePetDto {
   @IsString()
   vacuna_imagen_url: string;
 
+  @IsString()
+  perfil_imagen_url: string;
+
   @IsNotEmpty()
   @IsInt()
   id_usuario: number;

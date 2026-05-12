@@ -17,6 +17,7 @@ interface RandomPetResponse {
   id_usuario: number;
   foto_url?: string | null;
   imagen_url?: string | null;
+  perfil_imagen_url?: string | null;
 }
 
 interface FeedFilters {
@@ -37,6 +38,7 @@ interface MascotaOrigen {
   genero: string;
   estado_salud: string;
   vacuna_imagen_url: string | null;
+  perfil_imagen_url: string | null;
   fecha_registro: string;
   id_usuario: number;
 }
@@ -69,13 +71,15 @@ export class FeedHome implements OnInit, OnDestroy {
   isHuesitoLiked = false;
   showHuesitoReaction = false;
   errorMessage = '';
-  
+
   nombreMascotaElegida = '';
   mascotaOrigenId: number | null = null;
   listaPerros: RandomPetResponse[] = [];
 
   matchModalVisible = false;
   matchNombreMascota = '';
+
+  readonly imagenPlaceholder = 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80';
 
   constructor(
     private readonly http: HttpClient,
@@ -144,12 +148,25 @@ export class FeedHome implements OnInit, OnDestroy {
   }
 
   get photoUrl(): string {
-    const image = this.pet?.foto_url ?? this.pet?.imagen_url;
-    return image ?? '';
+    if (!this.pet) {
+      return this.imagenPlaceholder;
+    }
+    // Buscamos la imagen en cualquiera de los nombres que el backend pueda estar enviando
+    const image = this.pet.imagen_url || this.pet.perfil_imagen_url || this.pet.foto_url;
+    return image ? image : this.imagenPlaceholder;
   }
 
+  // 4. Mejoramos la validación de si tiene foto real
   get hasPhoto(): boolean {
-    return this.photoUrl.length > 0;
+    if (!this.pet) return false;
+    return !!(this.pet.imagen_url || this.pet.perfil_imagen_url || this.pet.foto_url);
+  }
+
+  // 5. Agregamos el manejador de errores de imagen (¡Vital para evitar bucles de red!)
+  manejarErrorImagen(event: Event): void {
+    const elemento = event.target as HTMLImageElement;
+    elemento.onerror = null;
+    elemento.src = this.imagenPlaceholder;
   }
 
   get vaccineCardUrl(): string | null {

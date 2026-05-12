@@ -26,6 +26,9 @@ export class Pet {
   @Column({ nullable: true })
   vacuna_imagen_url: string;
 
+  @Column({ nullable: true })
+  perfil_imagen_url: string;
+
   @CreateDateColumn()
   fecha_registro: Date;
 
