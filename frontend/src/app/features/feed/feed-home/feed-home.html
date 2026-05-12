@@ -15,11 +15,21 @@
     <main class="main-content">
 
       <header class="page-header">
-  <h1 class="page-header__title">Encuentra tu Match</h1>
+  <h1 class="page-header__title">
+    Encuentra tu Match para
+    <span *ngIf="nombreMascotaElegida" class="selected-pet-name">
+      {{ nombreMascotaElegida }}
+    </span>
+  </h1>
   <p class="page-header__subtitle">Desliza para encontrar el amigo perfecto para tu perrito</p>
 
   <!-- Botón filtros -->
-  <a routerLink="/feed/filtros" queryParamsHandling="preserve" class="btn-filtros">
+  <a
+    routerLink="/feed/filtros"
+    [queryParams]="{ idMascota: mascotaOrigenId }"
+    queryParamsHandling="merge"
+    class="btn-filtros"
+  >
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
       <line x1="4" y1="6" x2="20" y2="6"/>
       <line x1="8" y1="12" x2="16" y2="12"/>
@@ -28,37 +38,6 @@
     Filtros de Búsqueda
   </a>
 </header>
-
-  <div class="pet-selector-card">
-    <label for="mascotaOrigen" class="pet-selector-label">
-      {{ 'feed.selector.label' | translate }}
-    </label>
-
-    <select
-      id="mascotaOrigen"
-      name="mascotaOrigen"
-      class="pet-selector"
-      [(ngModel)]="mascotaOrigenId"
-      (ngModelChange)="onMascotaOrigenChange()"
-      [disabled]="cargandoMisMascotas || misMascotas.length === 0"
-    >
-      <option [ngValue]="null">
-        {{ 'feed.selector.placeholder' | translate }}
-      </option>
-
-      <option *ngFor="let mascota of misMascotas" [ngValue]="mascota.id_mascota">
-        {{ mascota.nombre }}
-      </option>
-    </select>
-
-    <small *ngIf="!mascotaOrigenId" class="pet-selector-help">
-      {{ 'feed.selector.help' | translate }}
-    </small>
-
-    <small *ngIf="errorMisMascotas" class="pet-selector-help error">
-      {{ errorMisMascotas }}
-    </small>
-  </div>
 
       <!-- Área centrada de la tarjeta -->
       <div class="match-stage">
@@ -76,9 +55,10 @@
               [alt]="'feed.petCard.photoAlt' | translate"
               class="dog-card__photo"
               id="dogPhoto"
+              (error)="manejarErrorImagen($event)"
             />
 
-            <!-- Placeholder mientras no hay foto -->
+            <!-- Placeholder mientras no hay foto (SVG) -->
             <div class="dog-card__photo-placeholder" id="dogPhotoPlaceholder" [class.hidden]="hasPhoto">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/>
@@ -89,6 +69,7 @@
 
             <!-- Gradiente + nombre superpuesto sobre la foto -->
             <div class="dog-card__photo-overlay">
+              <!-- El signo ? (safe navigation operator) es vital aquí por si pet es null -->
               <h2 class="dog-card__name" id="dogName">{{ pet?.nombre || ('feed.petCard.noName' | translate) }}</h2>
             </div>
 
@@ -236,6 +217,10 @@
 
       <button type="button" class="match-modal-btn" (click)="cerrarMatchModal()">
         {{ 'feed.matchModal.accept' | translate }}
+      </button>
+
+      <button type="button" class="match-modal-btn match-modal-btn--secondary" (click)="irAChats()">
+        Ir a chats
       </button>
     </div>
   </div>

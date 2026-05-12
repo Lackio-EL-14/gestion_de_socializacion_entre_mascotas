@@ -1,0 +1,131 @@
+<div class="chat-container">
+  <!-- Sidebar con lista de conversaciones -->
+  <aside class="chat-sidebar">
+    <div class="sidebar-header">
+      <h2>Mensajes</h2>
+      <button class="refresh-btn" (click)="loadInbox()" [disabled]="loadingInbox" title="Actualizar">
+        ⟳
+      </button>
+    </div>
+
+    <div class="pet-selector" *ngIf="userPets.length > 0">
+      <label for="chatPetSelector">Mascota activa</label>
+      <select id="chatPetSelector" [value]="selectedMascotaId ?? ''" (change)="onMascotaChange($event)">
+        <option *ngFor="let pet of userPets" [value]="pet.id_mascota">
+          {{ pet.nombre }}
+        </option>
+      </select>
+      <small class="pet-selector__hint">El inbox se actualiza según la mascota que selecciones.</small>
+    </div>
+
+    <!-- Error en inbox -->
+    <div *ngIf="errorInbox" class="error-message">
+      {{ errorInbox }}
+    </div>
+
+    <!-- Loading inbox -->
+    <div *ngIf="loadingInbox" class="loading-spinner">
+      <div class="loading-row loading-row--title"></div>
+      <div class="loading-row"></div>
+      <div class="loading-row loading-row--short"></div>
+    </div>
+
+    <!-- Lista de conversaciones -->
+    <div class="conversations-list" *ngIf="!loadingInbox">
+      <div *ngIf="inboxChats.length === 0" class="empty-state">
+        <p>No hay conversaciones para esta mascota todavía</p>
+      </div>
+
+      <button
+        *ngFor="let chat of inboxChats"
+        class="conversation-item"
+        [class.active]="selectedChat !== null && selectedChat.match.id_match === chat.match.id_match"
+        (click)="selectChat(chat)"
+      >
+        <div class="conversation-pet-name">
+          {{ getConversationPetName(chat) }}
+        </div>
+        <div class="conversation-preview">
+          <ng-container *ngIf="chat.lastMessage; else emptyPreview">
+            {{ chat.lastMessage.contenido | slice: 0:50 }}{{ chat.lastMessage.contenido.length > 50 ? '...' : '' }}
+          </ng-container>
+          <ng-template #emptyPreview>Sin mensajes aún</ng-template>
+        </div>
+        <div class="conversation-time">
+          {{ formatDate(chat.lastMessage?.fecha_envio) }}
+        </div>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Área principal de chat -->
+  <main class="chat-main">
+    <!-- Encabezado del chat -->
+    <div *ngIf="selectedChat" class="chat-header">
+      <h1>{{ getOtherPetName() }}</h1>
+      <p class="chat-status">En línea</p>
+    </div>
+
+    <div *ngIf="!selectedChat" class="chat-empty-state">
+      <p>Selecciona una conversación para empezar</p>
+    </div>
+
+    <!-- Área de mensajes -->
+    <div class="messages-area" #messageList *ngIf="selectedChat">
+      <!-- Error en mensajes -->
+      <div *ngIf="errorMessages" class="error-message">
+        {{ errorMessages }}
+      </div>
+
+      <!-- Loading mensajes -->
+      <div *ngIf="loadingMessages" class="loading-spinner">
+        <div class="message-skeleton" *ngFor="let item of [1,2,3]">
+          <div class="message-skeleton__bubble"></div>
+          <div class="message-skeleton__meta"></div>
+        </div>
+      </div>
+
+      <!-- Lista de mensajes -->
+      <div class="messages-container" *ngIf="!loadingMessages">
+        <div *ngIf="messages.length === 0" class="empty-messages">
+          <p>No hay mensajes aún. ¡Inicia la conversación!</p>
+        </div>
+
+        <div
+          *ngFor="let message of messages"
+          class="message"
+          [class.pending-message]="isPendingMessage(message)"
+          [class.own-message]="isOwnMessage(message)"
+          [class.other-message]="!isOwnMessage(message)"
+        >
+          <div class="message-content">
+            <p class="message-text">{{ message.contenido }}</p>
+            <span class="message-time">
+              {{ formatDate(message.fecha_envio) }}
+            </span>
+            <small *ngIf="isPendingMessage(message)" class="message-pending-label">Enviando...</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input de mensaje -->
+    <div class="message-input-area" *ngIf="selectedChat">
+      <textarea
+        class="message-input"
+        [(ngModel)]="messageInput"
+        (keypress)="onKeyPress($event)"
+        placeholder="Escribe un mensaje..."
+        [disabled]="loadingMessages"
+      ></textarea>
+      <button
+        class="send-btn"
+        (click)="sendMessage()"
+        [disabled]="!messageInput.trim() || loadingMessages"
+        title="Enviar (Enter)"
+      >
+        Enviar
+      </button>
+    </div>
+  </main>
+</div>

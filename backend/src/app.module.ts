@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module';
 import { PetsModule } from './modules/pets/pets.module';
 import { MatchesModule } from './modules/matches/matches.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { MessagesModule } from './modules/messages/messages.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { PublicationsModule } from './modules/publications/publications.module';
 import { ProfessionalProfileModule } from './modules/professional-profile/professional-profile.module';
@@ -24,7 +25,8 @@ import { UploadModule } from './modules/upload/upload.module';
             PetsModule, 
             MatchesModule, 
             ChatModule, 
-            ReportsModule, 
+            ReportsModule,
+            MessagesModule,
             PublicationsModule, 
             ProfessionalProfileModule,
             TypeOrmModule.forRoot({//

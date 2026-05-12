@@ -1,0 +1,51 @@
+<div class="layout">
+  <app-sidebar-worker></app-sidebar-worker>
+
+  <main class="main-content">
+
+    <header class="main-header">
+      <h1 class="main-header__title">{{ 'publications.myPublications.title' | translate }}</h1>
+      <p class="main-header__subtitle">{{ 'publications.myPublications.subtitle' | translate }}</p>
+    </header>
+
+    <div *ngIf="cargando" class="loading-state">
+      <p>Cargando tus publicaciones...</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="loading-state" style="color: red;">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <section class="publications-grid" *ngIf="!cargando && !errorMessage">
+
+      <div *ngIf="publications.length === 0" class="loading-state" style="grid-column: 1 / -1;">
+        <p>Aún no tienes publicaciones.</p>
+      </div>
+
+      <article class="pub-card" *ngFor="let pub of publications">
+
+        <div class="pub-card__image-wrapper">
+          <img [src]="pub.imageUrl || 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22400%22%20height%3D%22200%22%20viewBox%3D%220%200%20400%20200%22%3E%3Crect%20fill%3D%22%23e2e8f0%22%20width%3D%22400%22%20height%3D%22200%22%2F%3E%3Ctext%20fill%3D%22%2364748b%22%20font-family%3D%22sans-serif%22%20font-size%3D%2216%22%20font-weight%3D%22bold%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20alignment-baseline%3D%22middle%22%3ESin%20Imagen%3C%2Ftext%3E%3C%2Fsvg%3E'"
+               alt="Imagen de publicación"
+               class="pub-card__image"
+               (error)="manejarErrorImagen($event)">
+
+          <span class="pub-card__badge"
+                [ngClass]="{
+                  'badge--publicado': pub.status === 'Publicado',
+                  'badge--pendiente': pub.status === 'Pendiente'
+                }">
+            {{ pub.status }}
+          </span>
+        </div>
+
+        <div class="pub-card__content">
+          <p class="pub-card__text">{{ pub.title }}</p>
+          <span class="pub-card__date">{{ pub.date }}</span>
+        </div>
+
+      </article>
+    </section>
+
+  </main>
+</div>

@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from "rxjs";
 
 interface CreatePetRequest {
   nombre: string;
@@ -12,6 +13,7 @@ interface CreatePetRequest {
   edad: number;
   estado_salud: string;
   vacuna_imagen_url: string;
+  perfil_imagen_url: string;
   id_usuario: number | null;
 }
 @Component({
@@ -56,7 +58,7 @@ export class CreatePetComponent {
     private readonly translate: TranslateService
   ) {}
 
-  submit() {  
+  async submit() {
     if (this.enviando) {
       return;
     }
@@ -67,8 +69,6 @@ export class CreatePetComponent {
     const tamano = this.tamano.trim();
     const genero = this.genero.trim();
     const edad = this.edad;
-    const archivoVacunas = this.archivoVacunas;
-    const imagen = this.imagen;
     const estado_salud = this.estado_salud;
     if(!nombre) {
       this.mostrarModalByKey('pets.common.validationTitle', 'pets.create.validation.nameRequired', 'error');
@@ -102,35 +102,76 @@ export class CreatePetComponent {
       return;
     }
 
-    const body: CreatePetRequest = {
-      nombre: nombre,
-      raza: raza,
-      tamano: tamano,
-      genero: genero,
-      edad: edad,
-      estado_salud: "saludable",
-      vacuna_imagen_url: "",
-      //imagen: imagen
-      id_usuario: localStorage.getItem("id_usuario") ? Number(localStorage.getItem("id_usuario")) : null
-    };
+    try {
+      // 1. Preparar Headers con el Token para el endpoint de Upload
+      const token = localStorage.getItem("access_token");
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });
+
+      let urlImagenPerro = "";
+      let urlImagenVacuna = "";
+
+      // 2. Subir imagen del perrito (si el usuario la seleccionó)
+      if (this.imagen) {
+        const formData = new FormData();
+        // IMPORTANTE: Asegúrate de que 'file' sea el nombre de campo que espera tu endpoint /upload en NestJS
+        formData.append('file', this.imagen);
+
+        const uploadRes: any = await firstValueFrom(
+          this.http.post('http://localhost:3000/upload', formData, { headers })
+        );
+        urlImagenPerro = uploadRes.url;
+      }
+
+      // 3. Subir imagen de vacuna (si el usuario la seleccionó)
+      if (this.archivoVacunas) {
+        const formData = new FormData();
+        formData.append('file', this.archivoVacunas);
+
+        const uploadRes: any = await firstValueFrom(
+          this.http.post('http://localhost:3000/upload', formData, { headers })
+        );
+        urlImagenVacuna = uploadRes.url;
+      }
+
+      // 4. Armar el cuerpo de la petición final para Crear el Perrito
+      const body: CreatePetRequest = {
+        nombre: nombre,
+        raza: raza,
+        tamano: tamano,
+        genero: genero,
+        edad: edad!,
+        estado_salud: estado_salud,
+        vacuna_imagen_url: urlImagenVacuna, // URL final obtenida
+        perfil_imagen_url: urlImagenPerro,         // URL final obtenida
+        id_usuario: localStorage.getItem("id_usuario") ? Number(localStorage.getItem("id_usuario")) : null
+      };
 
     this.enviando = true;
 
-    this.http.post('https://gestion-de-socializacion-entre-mascotas.onrender.com/pets', body).subscribe({
-      next: () => {
-        this.limpiarFormulario();
-        this.enviando = false;
-        this.mostrarModalByKey('pets.create.modal.successTitle', 'pets.create.modal.successMessage', 'success');
-        this.cdr.detectChanges();
-      },
-      error: (error) => {
-        console.error('Error al crear la mascota:', error);
-        const mensaje= error?.error?.message || this.t('pets.create.modal.errorMessage');
-        this.enviando = false;
-        this.mostrarModal(this.t('pets.common.errorTitle'), Array.isArray(mensaje)?mensaje.join('\n'): mensaje, 'error');
-        this.cdr.detectChanges();
-      },
-    });
+    const petResponse = await firstValueFrom(
+        this.http.post('http://localhost:3000/pets', body)
+      );
+
+    this.limpiarFormulario();
+      this.enviando = false;
+      this.mostrarModalByKey('pets.create.modal.successTitle', 'pets.create.modal.successMessage', 'success');
+      this.cdr.detectChanges();
+
+    } catch (error: any) {
+      // Captura de errores tanto de la subida de imágenes como de la creación de la mascota
+      console.error('Error en el proceso:', error);
+      const mensaje = error?.error?.message || 'Error al procesar la solicitud o subir los archivos.';
+
+      this.enviando = false;
+      this.mostrarModal(
+        this.t('pets.common.errorTitle'),
+        Array.isArray(mensaje) ? mensaje.join('\n') : mensaje,
+        'error'
+      );
+      this.cdr.detectChanges();
+    }
 
   }
   onImageSelected(event: Event) {

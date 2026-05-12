@@ -20,6 +20,9 @@ public class ReporteService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public List<Reporte> obtenerPendientes() {
         return reporteRepository.findByEstado("pendiente");
     }
@@ -40,13 +43,38 @@ public class ReporteService {
             infractor.setCantidadStrikes(nuevosStrikes);
             if (nuevosStrikes >= 3) {
                 infractor.setEstaActivo(false);
+
+                emailService.enviarBaneo(
+                    infractor.getEmail(),
+                    infractor.getNombre(),
+                    reporte.getMotivo(),
+                    reporte.getComentario()
+                );
+            }else {
+
+                emailService.enviarStrike(
+                    infractor.getEmail(),
+                    infractor.getNombre(),
+                    nuevosStrikes,
+                    reporte.getMotivo(),
+                    reporte.getComentario()
+                );
             }
+
             reporte.setEstado("resuelto");
             break;
 
           case "BANEO_DIRECTO":
             infractor.setEstaActivo(false);
             reporte.setEstado("resuelto");
+
+            emailService.enviarBaneo(
+                infractor.getEmail(),
+                infractor.getNombre(),
+                reporte.getMotivo(),
+                reporte.getComentario()
+            );
+            
             break;
 
           case "IGNORAR":

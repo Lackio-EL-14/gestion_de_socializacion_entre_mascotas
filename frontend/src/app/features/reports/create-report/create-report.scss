@@ -225,3 +225,11 @@ $font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: $color-primary-hover;
   }
 }
+
+.char-counter {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #64748b;
+  text-align: right;
+}

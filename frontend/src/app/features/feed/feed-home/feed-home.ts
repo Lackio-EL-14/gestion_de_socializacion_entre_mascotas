@@ -17,6 +17,7 @@ interface RandomPetResponse {
   id_usuario: number;
   foto_url?: string | null;
   imagen_url?: string | null;
+  perfil_imagen_url?: string | null;
 }
 
 interface FeedFilters {
@@ -37,12 +38,14 @@ interface MascotaOrigen {
   genero: string;
   estado_salud: string;
   vacuna_imagen_url: string | null;
+  perfil_imagen_url: string | null;
   fecha_registro: string;
   id_usuario: number;
 }
 
 interface InteractionResponse {
   match: boolean;
+  id_match?: number;
 }
 
 @Component({
@@ -69,14 +72,14 @@ export class FeedHome implements OnInit, OnDestroy {
   showHuesitoReaction = false;
   errorMessage = '';
 
-  misMascotas: MascotaOrigen[] = [];
+  nombreMascotaElegida = '';
   mascotaOrigenId: number | null = null;
-  cargandoMisMascotas = false;
-  errorMisMascotas = '';
   listaPerros: RandomPetResponse[] = [];
 
   matchModalVisible = false;
   matchNombreMascota = '';
+
+  readonly imagenPlaceholder = 'https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=800&q=80';
 
   constructor(
     private readonly http: HttpClient,
@@ -95,10 +98,21 @@ export class FeedHome implements OnInit, OnDestroy {
       return;
     }
 
-    this.obtenerMisMascotas();
+    const idMascota = Number(this.route.snapshot.paramMap.get('idMascota'));
+
+    if (!Number.isInteger(idMascota) || idMascota <= 0) {
+      this.router.navigate(['/feed']);
+      return;
+    }
+
+    this.mascotaOrigenId = idMascota;
+    localStorage.setItem('id_mascota_actual', String(idMascota));
+    this.nombreMascotaElegida = history.state?.nombreMascota || '';
 
     this.route.queryParamMap.subscribe((params) => {
       this.activeFilters = this.parseFilters(params);
+      this.listaPerros = [];
+      this.pet = null;
       void this.loadPet();
     });
 
@@ -134,12 +148,25 @@ export class FeedHome implements OnInit, OnDestroy {
   }
 
   get photoUrl(): string {
-    const image = this.pet?.foto_url ?? this.pet?.imagen_url;
-    return image ?? '';
+    if (!this.pet) {
+      return this.imagenPlaceholder;
+    }
+    // Buscamos la imagen en cualquiera de los nombres que el backend pueda estar enviando
+    const image = this.pet.imagen_url || this.pet.perfil_imagen_url || this.pet.foto_url;
+    return image ? image : this.imagenPlaceholder;
   }
 
+  // 4. Mejoramos la validación de si tiene foto real
   get hasPhoto(): boolean {
-    return this.photoUrl.length > 0;
+    if (!this.pet) return false;
+    return !!(this.pet.imagen_url || this.pet.perfil_imagen_url || this.pet.foto_url);
+  }
+
+  // 5. Agregamos el manejador de errores de imagen (¡Vital para evitar bucles de red!)
+  manejarErrorImagen(event: Event): void {
+    const elemento = event.target as HTMLImageElement;
+    elemento.onerror = null;
+    elemento.src = this.imagenPlaceholder;
   }
 
   get vaccineCardUrl(): string | null {
@@ -158,12 +185,15 @@ export class FeedHome implements OnInit, OnDestroy {
   }
 
   goToReport(): void {
-    if (!this.pet?.id_usuario) {
+    if (!this.pet?.id_usuario || !this.mascotaOrigenId) {
       return;
     }
 
     this.router.navigate(['/reports/create-report'], {
-      state: { id_usuario_reported: this.pet.id_usuario },
+      state: {
+        id_usuario_reported: this.pet.id_usuario,
+        returnUrl: `/feed/home/${this.mascotaOrigenId}`
+      },
     });
   }
 
@@ -369,41 +399,6 @@ export class FeedHome implements OnInit, OnDestroy {
     return Number.isInteger(parsedId) && parsedId > 0 ? parsedId : null;
   }
 
-  obtenerMisMascotas(): void {
-    const token = localStorage.getItem('access_token');
-
-    if (!token) {
-      this.errorMisMascotas = this.t('feed.errors.noSession');
-      return;
-    }
-
-    this.cargandoMisMascotas = true;
-    this.errorMisMascotas = '';
-
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-
-    this.http.get<MascotaOrigen[] | MascotaOrigen>(`${this.apiBaseUrl}/pets/my-pets`, { headers })
-      .subscribe({
-        next: (respuesta) => {
-          this.misMascotas = Array.isArray(respuesta) ? respuesta : [respuesta];
-
-          if (this.misMascotas.length === 1) {
-            this.mascotaOrigenId = this.misMascotas[0].id_mascota;
-            void this.loadPet();
-          }
-
-          this.cargandoMisMascotas = false;
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error al cargar mis mascotas:', error);
-          this.errorMisMascotas = this.t('feed.errors.myPetsLoadFailed');
-          this.cargandoMisMascotas = false;
-          this.cdr.detectChanges();
-        }
-      });
-  }
-
   private registrarInteraccion(tipoAccion: 'LIKE' | 'REJECT'): void {
     if (!this.mascotaOrigenId || !this.pet) {
       return;
@@ -427,6 +422,9 @@ export class FeedHome implements OnInit, OnDestroy {
             this.dispararAnimacionHuesito();
 
             if (respuesta.match === true) {
+              if (respuesta.id_match) {
+                localStorage.setItem('last_match_id', String(respuesta.id_match));
+              }
               this.matchNombreMascota = nombreMascotaDestino;
               this.matchModalVisible = true;
               this.isLoading = false;
@@ -479,16 +477,12 @@ export class FeedHome implements OnInit, OnDestroy {
     this.avanzarSiguienteMascota();
   }
 
-  onMascotaOrigenChange(): void {
-    this.listaPerros = [];
-    this.pet = null;
-    this.errorMessage = '';
-
-    if (!this.mascotaOrigenId) {
-      return;
-    }
-
-    void this.loadPet();
+  irAChats(): void {
+    this.matchModalVisible = false;
+    this.matchNombreMascota = '';
+    const idMatch = localStorage.getItem('last_match_id');
+    void this.router.navigate(['/chats'], {
+      queryParams: idMatch ? { idMatch } : {}
+    });
   }
 }
-

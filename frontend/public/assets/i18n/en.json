@@ -2,7 +2,7 @@
   "publications": {
     "see": {
       "title": "Publications",
-      "subtitle": "Community feed and industry professionals",
+      "subtitle": "Community and industry worker feed",
       "avatarAlt": "Publication author avatar",
       "imageAlt": "Publication image",
       "likeLabel": "Like",
@@ -43,6 +43,10 @@
         "createFailed": "Could not create publication. Please try again.",
         "createSuccess": "Publication created successfully."
       }
+    },
+    "myPublications": {
+      "title": "My Publications",
+      "subtitle": "Manage and review the status of your publications"
     }
   },
   "home": {
@@ -261,6 +265,21 @@
       "apply": "Apply Filters",
       "clear": "Clear Filters",
       "cancel": "Cancel"
+    },
+    "choosePet": {
+      "title": "Choose your pet",
+      "subtitle": "Select which of your pets you want to use to find a match",
+      "loading": "Loading your pets...",
+      "choose": "Choose",
+      "createPet": "Register pet",
+      "emptyTitle": "You don't have pets yet",
+      "emptyMessage": "Register a pet to start finding matches.",
+      "noName": "No name",
+      "noBreed": "No breed",
+      "errors": {
+        "noSession": "There is no active session.",
+        "loadFailed": "Could not load your pets."
+      }
     }
   },
   "sidebar": {

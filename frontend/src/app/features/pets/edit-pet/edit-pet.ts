@@ -10,6 +10,7 @@ interface UpdatePetRequest {
   genero?: string;
   edad?: number;
   estado_salud?: string;
+  perfil_imagen_url?: string;
   vacuna_imagen_url?: string;
 }
 
@@ -21,6 +22,7 @@ interface Mascota {
   edad: number;
   genero: string;
   estado_salud: string;
+  perfil_imagen_url: string | null;
   vacuna_imagen_url: string | null;
   fecha_registro: string;
   id_usuario: number;
@@ -41,6 +43,7 @@ export class EditPetComponent implements OnInit {
   genero = '';
   edad: number | null = null;
   estado_salud = 'saludable';
+  perfil_imagen_url: string | null = null;
   vacuna_imagen_url: string | null = null;
 
   readonly imagenPlaceholder =
@@ -87,7 +90,7 @@ cargarMascota(): void {
   const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
   this.http.get<Mascota[] | Mascota>(
-    'https://gestion-de-socializacion-entre-mascotas.onrender.com/pets/my-pets',
+    'http://localhost:3000/pets/my-pets',
     { headers }
   ).subscribe({
     next: (respuesta) => {
@@ -108,6 +111,7 @@ cargarMascota(): void {
       this.edad = mascota.edad;
       this.estado_salud = mascota.estado_salud || 'saludable';
       this.vacuna_imagen_url = mascota.vacuna_imagen_url;
+      this.perfil_imagen_url = mascota.perfil_imagen_url;
 
       this.cargando = false;
       this.cdr.detectChanges();
@@ -167,7 +171,7 @@ cargarMascota(): void {
 
     this.enviando = true;
 
-    this.http.patch(`https://gestion-de-socializacion-entre-mascotas.onrender.com/pets/${this.idMascota}`, body).subscribe({
+    this.http.patch(`http://localhost:3000/pets/${this.idMascota}`, body).subscribe({
       next: () => {
         this.enviando = false;
         this.mostrarModalByKey('pets.edit.modal.successTitle', 'pets.edit.modal.successMessage', 'success');

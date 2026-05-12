@@ -25,6 +25,7 @@ export class Filtros implements OnInit {
     estado_salud: '',
     genero: '',
   };
+  idMascota: number | null = null;
 
   constructor(
     private readonly router: Router,
@@ -33,6 +34,9 @@ export class Filtros implements OnInit {
 
   ngOnInit(): void {
     const params = this.route.snapshot.queryParamMap;
+
+    const rawIdMascota = params.get('idMascota');
+    this.idMascota = rawIdMascota ? Number(rawIdMascota) : null;
 
     this.filters = {
       raza: params.get('raza') ?? '',
@@ -80,7 +84,11 @@ export class Filtros implements OnInit {
       queryParams['edad_max'] = edadMax;
     }
 
-    this.router.navigate(['/feed'], { queryParams });
+    if (this.idMascota) {
+      this.router.navigate(['/feed/home', this.idMascota], { queryParams });
+    } else {
+      this.router.navigate(['/feed'], { queryParams });
+    }
   }
 
   clearFilters(): void {
@@ -93,7 +101,11 @@ export class Filtros implements OnInit {
       genero: '',
     };
 
-    this.router.navigate(['/feed']);
+    if (this.idMascota) {
+      this.router.navigate(['/feed/home', this.idMascota]);
+    } else {
+      this.router.navigate(['/feed']);
+    }
   }
 
   private toValidAge(rawValue: string): number | null {

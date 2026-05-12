@@ -6,13 +6,44 @@ import { DashboardEditOwner } from './features/dashboards/dashboard-edit_owner/d
 import { DashboardAdmin } from './features/dashboards/dashboard-admin/dashboard-admin';
 import { DashboardWorkerComponent } from './features/dashboards/dashboard-worker/dashboard-worker';
 import { AdminContentPublicationsComponent } from './features/dashboards/dashboard-admin/content-management/content-management';
+import { roleGuard } from './core/guards/role.guard';
 
 const routes: Routes = [
-  { path: 'dashboard-worker', component: DashboardWorkerComponent },
+  /*{ path: 'dashboard-worker', component: DashboardWorkerComponent },
   { path: 'dashboard-owner', component: DashboardOwner },
   { path: 'dashboard-admin', component: DashboardAdmin },
   { path: 'admin/content', component: AdminContentPublicationsComponent },
-  { path: 'dashboard-edit-owner', component: DashboardEditOwner },
+  { path: 'dashboard-edit-owner', component: DashboardEditOwner },*/
+  { 
+    path: 'dashboard-worker', 
+    component: DashboardWorkerComponent,
+    canActivate: [roleGuard],
+    data: { roles: [3] }
+  },
+  { 
+    path: 'dashboard-owner', 
+    component: DashboardOwner,
+    canActivate: [roleGuard],
+    data: { roles: [1] }
+  },
+  { 
+    path: 'dashboard-admin', 
+    component: DashboardAdmin,
+    canActivate: [roleGuard],
+    data: { roles: [2] }
+  },
+  { 
+    path: 'admin/content', 
+    component: AdminContentPublicationsComponent,
+    canActivate: [roleGuard],
+    data: { roles: [2] }
+  },
+  { 
+    path: 'dashboard-edit-owner', 
+    component: DashboardEditOwner,
+    canActivate: [roleGuard],
+    data: { roles: [1] }
+  },
   {
     path: 'publications',
     loadChildren: () =>
@@ -32,6 +63,26 @@ const routes: Routes = [
     path: 'pets',
     loadChildren: () =>
       import('./features/pets/pets-module').then(m => m.PetsModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () =>
+      import('./features/chat/chat-module').then(m => m.ChatModule)
+  },
+  {
+    path: 'chats',
+    redirectTo: 'chat',
+    pathMatch: 'full'
+  },
+  {
+    path: 'worker/chats',
+    redirectTo: 'chat',
+    pathMatch: 'full'
+  },
+  {
+    path: 'owner/chats',
+    redirectTo: 'chat',
+    pathMatch: 'full'
   },
   {
     path: 'feed',

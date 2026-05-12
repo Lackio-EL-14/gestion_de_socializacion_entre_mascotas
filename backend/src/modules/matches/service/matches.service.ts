@@ -4,6 +4,7 @@ import { Repository, DataSource } from 'typeorm';
 import { Match } from '../entities/match.entity';
 import { Interaccion } from '../../users/entities/interaccion.entity';
 import { CreateInteractionDto } from '../dto/create-interaction.dto';
+import { MessagesGateway } from '../../messages/gateway/messages.gateway';
 
 @Injectable()
 export class MatchesService {
@@ -13,6 +14,7 @@ export class MatchesService {
     @InjectRepository(Interaccion)
     private interaccionRepository: Repository<Interaccion>,
     private dataSource: DataSource,
+    private readonly messagesGateway: MessagesGateway,
   ) {}
 
   async processInteraction(dto: CreateInteractionDto) {
@@ -32,6 +34,8 @@ export class MatchesService {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
+
+    let matchGuardado: Match | null = null;
 
     try {
       const nuevaInteraccion = queryRunner.manager.create(Interaccion, {
@@ -57,12 +61,15 @@ export class MatchesService {
             mascota_1: { id_mascota: id_mascota_origen },
             mascota_2: { id_mascota: id_mascota_destino },
           });
-          await queryRunner.manager.save(nuevoMatch);
+          matchGuardado = await queryRunner.manager.save(nuevoMatch);
           isMatch = true;
         }
       }
 
       await queryRunner.commitTransaction();
+      if (matchGuardado) {
+        this.messagesGateway.notifyMatchCreated(matchGuardado);
+      }
       return { match: isMatch };
     } catch (error) {
       await queryRunner.rollbackTransaction();

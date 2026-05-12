@@ -37,6 +37,11 @@ export class CreateReportComponent {
   modalTitulo = '';
   modalMensaje = '';
   modalTipo: 'success' | 'error' = 'success';
+  returnUrl = '/feed';
+
+  readonly motivoMaxLength = 80;
+  readonly comentarioMaxLength = 500;
+  private readonly textoSeguroRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s.,;:¿?¡!()\-_"']+$/;
 
   constructor(
     private readonly http: HttpClient,
@@ -47,6 +52,8 @@ export class CreateReportComponent {
     const rawId = history.state?.id_usuario_reported;
     this.idUsuarioReportado =
       Number.isInteger(Number(rawId)) && Number(rawId) > 0 ? Number(rawId) : null;
+
+    this.returnUrl = history.state?.returnUrl || '/feed';
   }
 
   submit(): void {
@@ -57,6 +64,42 @@ export class CreateReportComponent {
     const motivo = this.motivo.trim();
     const comentario = this.comentario.trim();
     const token = localStorage.getItem('access_token');
+
+    if (motivo.length > this.motivoMaxLength) {
+      this.mostrarModal(
+        this.t('reports.common.validationTitle'),
+        `El asunto no puede superar ${this.motivoMaxLength} caracteres.`,
+        'error'
+      );
+      return;
+    }
+
+    if (comentario.length > this.comentarioMaxLength) {
+      this.mostrarModal(
+        this.t('reports.common.validationTitle'),
+        `El comentario no puede superar ${this.comentarioMaxLength} caracteres.`,
+        'error'
+      );
+      return;
+    }
+
+    if (!this.textoSeguroRegex.test(motivo)) {
+      this.mostrarModal(
+        this.t('reports.common.validationTitle'),
+        'El asunto contiene caracteres no permitidos.',
+        'error'
+      );
+      return;
+    }
+
+    if (!this.textoSeguroRegex.test(comentario)) {
+      this.mostrarModal(
+        this.t('reports.common.validationTitle'),
+        'El comentario contiene caracteres no permitidos.',
+        'error'
+      );
+      return;
+    }
 
     if (!token) {
       this.mostrarModalByKey('reports.common.errorTitle', 'reports.create.errors.noSession', 'error');
@@ -88,7 +131,7 @@ export class CreateReportComponent {
 
     this.enviando = true;
 
-    this.http.post<CreateReportResponse>('https://gestion-de-socializacion-entre-mascotas.onrender.com/reports', body, { headers }).subscribe({
+    this.http.post<CreateReportResponse>('http://localhost:3000/reports', body, { headers }).subscribe({
       next: () => {
         this.enviando = false;
         this.mostrarModalByKey('reports.create.modal.successTitle', 'reports.create.modal.successMessage', 'success');
@@ -109,14 +152,14 @@ export class CreateReportComponent {
   }
 
   cancelar(): void {
-    this.router.navigate(['/feed']);
+    this.router.navigateByUrl(this.returnUrl);
   }
 
   cerrarModal(): void {
     this.modalVisible = false;
 
     if (this.modalTipo === 'success') {
-      this.router.navigate(['/feed']);
+      this.router.navigateByUrl(this.returnUrl);
     }
   }
 
