@@ -119,7 +119,7 @@ export class CreatePetComponent {
         formData.append('file', this.imagen);
 
         const uploadRes: any = await firstValueFrom(
-          this.http.post('http://localhost:3000/upload', formData, { headers })
+          this.http.post('https://gestion-de-socializacion-entre-mascotas.onrender.com/upload', formData, { headers })
         );
         urlImagenPerro = uploadRes.url;
       }
@@ -130,7 +130,7 @@ export class CreatePetComponent {
         formData.append('file', this.archivoVacunas);
 
         const uploadRes: any = await firstValueFrom(
-          this.http.post('http://localhost:3000/upload', formData, { headers })
+          this.http.post('https://gestion-de-socializacion-entre-mascotas.onrender.com/upload', formData, { headers })
         );
         urlImagenVacuna = uploadRes.url;
       }
@@ -151,7 +151,7 @@ export class CreatePetComponent {
     this.enviando = true;
 
     const petResponse = await firstValueFrom(
-        this.http.post('http://localhost:3000/pets', body)
+        this.http.post('https://gestion-de-socializacion-entre-mascotas.onrender.com/pets', body)
       );
 
     this.limpiarFormulario();
