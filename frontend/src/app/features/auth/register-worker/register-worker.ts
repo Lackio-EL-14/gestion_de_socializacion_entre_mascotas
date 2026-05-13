@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { AppLanguage, LanguageService } from '../../../core/services/language.service';
 
 interface RegistroTrabajadorRequest {
   nombre: string;
@@ -35,13 +36,18 @@ export class RegisterWorkerComponent {
   modalTitulo = '';
   modalMensaje = '';
   modalTipo: 'success' | 'error' = 'success';
+  readonly languageOptions: readonly AppLanguage[];
+selectedLanguage: AppLanguage;
 
   constructor(
     private readonly http: HttpClient,
     private readonly router: Router,
     private readonly cdr: ChangeDetectorRef,
     private readonly translate: TranslateService,
-  ) {}
+    private readonly languageService: LanguageService,
+  )
+  {this.languageOptions = this.languageService.availableLanguages;
+  this.selectedLanguage = this.languageService.getCurrentLanguage();}
 
   registro(): void {
     const nombre = this.nombre.trim();
@@ -179,4 +185,11 @@ export class RegisterWorkerComponent {
       this.router.navigate(['/login']);
     }
   }
+  onLanguageChange(language: string): void {
+  if (language !== 'es' && language !== 'en' && language !== 'fr') {
+    return;
+  }
+  this.selectedLanguage = language as AppLanguage;
+  this.languageService.setLanguage(language);
+}
 }

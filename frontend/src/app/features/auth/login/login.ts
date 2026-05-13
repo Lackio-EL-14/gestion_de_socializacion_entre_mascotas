@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { AppLanguage, LanguageService } from '../../../core/services/language.service';
 
 interface LoginUsuarioRequest {
   email: string;
@@ -18,7 +19,7 @@ interface LoginUsuarioResponse {
   nombre: string;
   email: string;
   id_usuario: number;
-  rol: RolResponse; // <- NUEVO CAMPO
+  rol: RolResponse;
 }
 
 @Component({
@@ -35,13 +36,17 @@ export class Login {
   modalTitulo = '';
   modalMensaje = '';
   modalTipo: 'success' | 'error' = 'success';
+  readonly languageOptions: readonly AppLanguage[];
+  selectedLanguage: AppLanguage;
 
   constructor(
     private readonly http: HttpClient,
     private readonly cdr: ChangeDetectorRef,
     private readonly router: Router,
     private readonly translate: TranslateService,
-  ) {}
+    private readonly languageService: LanguageService,
+  ) {this.languageOptions = this.languageService.availableLanguages;
+  this.selectedLanguage = this.languageService.getCurrentLanguage();}
 
   iniciarSesion(): void {
     const email = this.email.trim();
@@ -153,5 +158,12 @@ export class Login {
 
   cerrarModal(): void {
     this.modalVisible = false;
+  }
+  onLanguageChange(language: string): void {
+    if (language !== 'es' && language !== 'en' && language !== 'fr') {
+      return;
+    }
+    this.selectedLanguage = language as AppLanguage;
+    this.languageService.setLanguage(language);
   }
 }

@@ -162,6 +162,41 @@ ul {
   }
 }
 
+.top-right-lang-switch {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}
+
+/* Clases heredadas del home para mantener tu diseño original */
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(37, 99, 235, 0.2); // $color-primary
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.8);
+  min-width: 170px;
+}
+
+.language-switch__label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569; // $color-text-muted
+}
+
+.language-switch__select {
+  border: none;
+  background: transparent;
+  color: #111827; // $color-text-dark
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
 @media (max-width: 768px) {
   .sidebar-mobile-toggle {
     display: inline-flex;

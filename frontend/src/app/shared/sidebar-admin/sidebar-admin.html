@@ -73,6 +73,16 @@
   </nav>
 
   <div class="sidebar__footer">
+    <label class="language-switch" for="lang-switch-sidebar" style="margin-bottom: 1rem; width: 100%; justify-content: space-between;">
+      <span class="language-switch__label">{{ 'language.label' | translate }}</span>
+      <select id="lang-switch-sidebar-admin" class="language-switch__select" (change)="onLanguageChange($any($event.target).value)">
+        <option *ngFor="let lang of languageOptions"
+          [value]="lang"
+          [selected]="lang === selectedLanguage">
+          {{ ('language.' + lang) | translate }}
+        </option>
+      </select>
+    </label>
     <a href="#" class="sidebar__nav-link sidebar__logout">
       <svg class="sidebar__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
